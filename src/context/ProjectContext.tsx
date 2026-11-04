@@ -3,8 +3,7 @@
 // Phase 4E: Multilingual Content System
 // =====================================================
 
-import React, { createContext, useContext, useState, useCallback, useEffect, ReactNode } from 'react';
-import { loadFromStorage, saveToStorage } from '../utils/storageHelpers';
+import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
 import {
   Project,
   ProjectStatus,
@@ -758,8 +757,6 @@ const additionalProjects: Project[] = [
 // Merge all projects
 const ALL_PROJECTS = [...INITIAL_PROJECTS, ...additionalProjects];
 
-const PROJECTS_STORAGE_KEY = 'axiomx_projects';
-
 interface ProjectContextType {
   projects: Project[];
   addProject: (
@@ -785,25 +782,7 @@ interface ProjectContextType {
 const ProjectContext = createContext<ProjectContextType | undefined>(undefined);
 
 export const ProjectProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [projects, setProjects] = useState<Project[]>([]);
-  const [isLoaded, setIsLoaded] = useState(false);
-
-  useEffect(() => {
-    const stored = loadFromStorage<Project[]>(PROJECTS_STORAGE_KEY);
-    if (stored && stored.length > 0) {
-      setProjects(stored);
-    } else {
-      setProjects(ALL_PROJECTS);
-      saveToStorage(PROJECTS_STORAGE_KEY, ALL_PROJECTS);
-    }
-    setIsLoaded(true);
-  }, []);
-
-  useEffect(() => {
-    if (isLoaded && projects.length > 0) {
-      saveToStorage(PROJECTS_STORAGE_KEY, projects);
-    }
-  }, [projects, isLoaded]);
+  const [projects, setProjects] = useState<Project[]>(ALL_PROJECTS);
 
   const addProject = useCallback(
     (

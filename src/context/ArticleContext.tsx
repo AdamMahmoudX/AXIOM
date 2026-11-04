@@ -3,8 +3,7 @@
 // Phase 4E: Multilingual Content System
 // =====================================================
 
-import React, { createContext, useContext, useState, useCallback, useEffect, ReactNode } from 'react';
-import { loadFromStorage, saveToStorage } from '../utils/storageHelpers';
+import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
 import { Article, ArticleStatus, TranslationStatus, calculateTranslationStatus } from '../types/project';
 import { Block } from '../components/blocks/blockTypes';
 
@@ -411,30 +410,10 @@ interface ArticleContextType {
   ) => void;
 }
 
-const ARTICLES_STORAGE_KEY = 'axiomx_articles';
-
 const ArticleContext = createContext<ArticleContextType | undefined>(undefined);
 
 export const ArticleProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [articles, setArticles] = useState<Article[]>([]);
-  const [isLoaded, setIsLoaded] = useState(false);
-
-  useEffect(() => {
-    const stored = loadFromStorage<Article[]>(ARTICLES_STORAGE_KEY);
-    if (stored && Array.isArray(stored) && stored.every((item: unknown) => typeof item === 'object' && item !== null && 'id' in item && 'title' in item)) {
-      setArticles(stored as Article[]);
-    } else {
-      setArticles(INITIAL_ARTICLES);
-      saveToStorage(ARTICLES_STORAGE_KEY, INITIAL_ARTICLES);
-    }
-    setIsLoaded(true);
-  }, []);
-
-  useEffect(() => {
-    if (isLoaded && articles.length > 0) {
-      saveToStorage(ARTICLES_STORAGE_KEY, articles);
-    }
-  }, [articles, isLoaded]);
+  const [articles, setArticles] = useState<Article[]>(INITIAL_ARTICLES);
 
   const addArticle = useCallback(
     (articleData: Omit<Article, 'id' | 'createdAt' | 'updatedAt' | 'translationStatus'>) => {

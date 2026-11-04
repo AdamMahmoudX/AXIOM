@@ -1,19 +1,10 @@
 // =====================================================
 // EMPLOYEE CONTEXT - AXIOMX ADMIN SYSTEM
 // Phase 3: Employee Management System
-// Phase 6A-3: Service CMS Roles Support
 // =====================================================
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import {
-  Employee,
-  EmployeePermissions,
-  DEFAULT_ROLE_PERMISSIONS,
-  SERVICE_ROLE_PERMISSIONS,
-  UserRole,
-  EmployeeStatus,
-  ServiceRole
-} from '../types/user';
+import { Employee, EmployeePermissions, DEFAULT_ROLE_PERMISSIONS, UserRole, EmployeeStatus } from '../types/user';
 import { MOCK_EMPLOYEES } from '../data/employees';
 
 // Storage key for employees
@@ -38,8 +29,6 @@ interface EmployeeContextType {
   updateEmployeePermissions: (id: string, permissions: EmployeePermissions) => void;
   updateEmployeeStatus: (id: string, status: EmployeeStatus) => void;
   updateEmployeeRole: (id: string, role: UserRole) => void;
-  updateEmployeeServiceRole: (id: string, serviceRole: ServiceRole | undefined) => void; // Phase 6A-3
-  getEmployeesByServiceRole: (serviceRole: ServiceRole) => Employee[]; // Phase 6A-3
   isLoading: boolean;
 }
 
@@ -127,43 +116,6 @@ export const EmployeeProvider: React.FC<{ children: ReactNode }> = ({ children }
     });
   };
 
-  // =====================================================
-  // SERVICE ROLE METHODS (Phase 6A-3)
-  // =====================================================
-
-  /**
-   * Update employee's service role
-   * If serviceRole is undefined, removes the service role
-   * If serviceRole is set, applies service role permissions
-   */
-  const updateEmployeeServiceRole = (id: string, serviceRole: ServiceRole | undefined) => {
-    const employee = getEmployee(id);
-    if (!employee) return;
-
-    if (serviceRole) {
-      // Apply service role permissions
-      const servicePermissions = SERVICE_ROLE_PERMISSIONS[serviceRole];
-      updateEmployee(id, {
-        serviceRole,
-        permissions: servicePermissions
-      });
-    } else {
-      // Remove service role and reset to system role permissions
-      const systemPermissions = DEFAULT_ROLE_PERMISSIONS[employee.role];
-      updateEmployee(id, {
-        serviceRole: undefined,
-        permissions: systemPermissions
-      });
-    }
-  };
-
-  /**
-   * Get all employees with a specific service role
-   */
-  const getEmployeesByServiceRole = (serviceRole: ServiceRole): Employee[] => {
-    return employees.filter(emp => emp.serviceRole === serviceRole);
-  };
-
   const value: EmployeeContextType = {
     employees,
     addEmployee,
@@ -173,8 +125,6 @@ export const EmployeeProvider: React.FC<{ children: ReactNode }> = ({ children }
     updateEmployeePermissions,
     updateEmployeeStatus,
     updateEmployeeRole,
-    updateEmployeeServiceRole, // Phase 6A-3
-    getEmployeesByServiceRole, // Phase 6A-3
     isLoading,
   };
 
