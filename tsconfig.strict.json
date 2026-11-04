@@ -1,0 +1,28 @@
+{
+  "extends": "./tsconfig.app.json",
+  "compilerOptions": {
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitReturns": true,
+    "ignoreDeprecations": "5.0"
+  },
+  "include": [
+    "src/vite-env.d.ts",
+    "src/config/env.ts",
+    "src/api/client.ts",
+    "src/api/types.ts",
+    "src/api/auth.ts",
+    "src/utils/storageHelpers.ts",
+    "src/utils/mockAuth.ts",
+    "src/utils/devLog.ts",
+    "src/utils/clientRequestsStorage.ts",
+    "src/utils/teamChatStorage.ts",
+    "src/services/auth/GoogleOAuthService.ts",
+    "src/context/AuthContext.tsx",
+    "src/components/ProtectedRoute.tsx"
+  ]
+}

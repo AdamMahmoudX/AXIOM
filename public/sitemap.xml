@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://axiomx.space.minimax.io/</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://axiomx.space.minimax.io/"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://axiomx.space.minimax.io/ar"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://axiomx.space.minimax.io/"/>
+  </url>
+  <url>
+    <loc>https://axiomx.space.minimax.io/ar</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://axiomx.space.minimax.io/projects</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://axiomx.space.minimax.io/projects"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://axiomx.space.minimax.io/ar/projects"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://axiomx.space.minimax.io/projects"/>
+  </url>
+  <url>
+    <loc>https://axiomx.space.minimax.io/ar/projects</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <!-- Projects - English -->
+  <url>
+    <loc>https://axiomx.space.minimax.io/projects/axiomx-admin-dashboard</loc>
+    <lastmod>2026-06-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://axiomx.space.minimax.io/projects/axiomx-admin-dashboard"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://axiomx.space.minimax.io/ar/projects/axiomx-admin-dashboard-ar"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://axiomx.space.minimax.io/projects/axiomx-admin-dashboard"/>
+  </url>
+  <url>
+    <loc>https://axiomx.space.minimax.io/projects/healthtrack-mobile-app</loc>
+    <lastmod>2026-03-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://axiomx.space.minimax.io/projects/healthtrack-mobile-app"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://axiomx.space.minimax.io/ar/projects/healthtrack-mobile-app-ar"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://axiomx.space.minimax.io/projects/healthtrack-mobile-app"/>
+  </url>
+  <url>
+    <loc>https://axiomx.space.minimax.io/projects/financeflow-saas-platform</loc>
+    <lastmod>2026-06-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://axiomx.space.minimax.io/projects/financeflow-saas-platform"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://axiomx.space.minimax.io/ar/projects/financeflow-saas-platform-ar"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://axiomx.space.minimax.io/projects/financeflow-saas-platform"/>
+  </url>
+  <url>
+    <loc>https://axiomx.space.minimax.io/projects/edulearn-platform</loc>
+    <lastmod>2026-06-03</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://axiomx.space.minimax.io/projects/edulearn-platform"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://axiomx.space.minimax.io/ar/projects/edulearn-platform-ar"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://axiomx.space.minimax.io/projects/edulearn-platform"/>
+  </url>
+  <url>
+    <loc>https://axiomx.space.minimax.io/projects/retailmax-ecommerce</loc>
+    <lastmod>2026-01-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://axiomx.space.minimax.io/projects/retailmax-ecommerce"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://axiomx.space.minimax.io/ar/projects/retailmax-ecommerce-ar"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://axiomx.space.minimax.io/projects/retailmax-ecommerce"/>
+  </url>
+  <url>
+    <loc>https://axiomx.space.minimax.io/projects/smarthome-iot-system</loc>
+    <lastmod>2026-04-12</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://axiomx.space.minimax.io/projects/smarthome-iot-system"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://axiomx.space.minimax.io/ar/projects/smarthome-iot-system-ar"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://axiomx.space.minimax.io/projects/smarthome-iot-system"/>
+  </url>
+  <url>
+    <loc>https://axiomx.space.minimax.io/projects/cryptotrack-wallet</loc>
+    <lastmod>2026-06-04</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://axiomx.space.minimax.io/projects/cryptotrack-wallet"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://axiomx.space.minimax.io/ar/projects/cryptotrack-wallet-ar"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://axiomx.space.minimax.io/projects/cryptotrack-wallet"/>
+  </url>
+  <url>
+    <loc>https://axiomx.space.minimax.io/projects/travelease-app</loc>
+    <lastmod>2026-06-02</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://axiomx.space.minimax.io/projects/travelease-app"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://axiomx.space.minimax.io/ar/projects/travelease-app-ar"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://axiomx.space.minimax.io/projects/travelease-app"/>
+  </url>
+  <url>
+    <loc>https://axiomx.space.minimax.io/projects/hrconnect-portal</loc>
+    <lastmod>2023-12-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://axiomx.space.minimax.io/projects/hrconnect-portal"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://axiomx.space.minimax.io/ar/projects/hrconnect-portal-ar"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://axiomx.space.minimax.io/projects/hrconnect-portal"/>
+  </url>
+  <url>
+    <loc>https://axiomx.space.minimax.io/projects/gamearena-platform</loc>
+    <lastmod>2026-06-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://axiomx.space.minimax.io/projects/gamearena-platform"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://axiomx.space.minimax.io/ar/projects/gamearena-platform-ar"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://axiomx.space.minimax.io/projects/gamearena-platform"/>
+  </url>
+  <url>
+    <loc>https://axiomx.space.minimax.io/projects/medicare-portal</loc>
+    <lastmod>2026-06-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://axiomx.space.minimax.io/projects/medicare-portal"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://axiomx.space.minimax.io/ar/projects/medicare-portal-ar"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://axiomx.space.minimax.io/projects/medicare-portal"/>
+  </url>
+  <url>
+    <loc>https://axiomx.space.minimax.io/projects/logisticspro-tracker</loc>
+    <lastmod>2024-02-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://axiomx.space.minimax.io/projects/logisticspro-tracker"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://axiomx.space.minimax.io/ar/projects/logisticspro-tracker-ar"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://axiomx.space.minimax.io/projects/logisticspro-tracker"/>
+  </url>
+  <url>
+    <loc>https://axiomx.space.minimax.io/projects/fitlife-dashboard</loc>
+    <lastmod>2023-11-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://axiomx.space.minimax.io/projects/fitlife-dashboard"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://axiomx.space.minimax.io/ar/projects/fitlife-dashboard-ar"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://axiomx.space.minimax.io/projects/fitlife-dashboard"/>
+  </url>
+  <url>
+    <loc>https://axiomx.space.minimax.io/projects/realestate-hub</loc>
+    <lastmod>2026-06-04</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://axiomx.space.minimax.io/projects/realestate-hub"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://axiomx.space.minimax.io/ar/projects/realestate-hub-ar"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://axiomx.space.minimax.io/projects/realestate-hub"/>
+  </url>
+  <url>
+    <loc>https://axiomx.space.minimax.io/projects/fooddelivery-app</loc>
+    <lastmod>2026-05-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://axiomx.space.minimax.io/projects/fooddelivery-app"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://axiomx.space.minimax.io/ar/projects/fooddelivery-app-ar"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://axiomx.space.minimax.io/projects/fooddelivery-app"/>
+  </url>
+  <!-- Services - English -->
+  <url>
+    <loc>https://axiomx.space.minimax.io/services/web-engineering</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://axiomx.space.minimax.io/services/web-engineering"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://axiomx.space.minimax.io/ar/services/web-engineering"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://axiomx.space.minimax.io/services/web-engineering"/>
+  </url>
+  <url>
+    <loc>https://axiomx.space.minimax.io/ar/services/web-engineering</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://axiomx.space.minimax.io/services/mobile-applications</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://axiomx.space.minimax.io/services/mobile-applications"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://axiomx.space.minimax.io/ar/services/mobile-applications"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://axiomx.space.minimax.io/services/mobile-applications"/>
+  </url>
+  <url>
+    <loc>https://axiomx.space.minimax.io/ar/services/mobile-applications</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://axiomx.space.minimax.io/services/ui-ux-architecture</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://axiomx.space.minimax.io/services/ui-ux-architecture"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://axiomx.space.minimax.io/ar/services/ui-ux-architecture"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://axiomx.space.minimax.io/services/ui-ux-architecture"/>
+  </url>
+  <url>
+    <loc>https://axiomx.space.minimax.io/ar/services/ui-ux-architecture</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://axiomx.space.minimax.io/services/ai-systems</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://axiomx.space.minimax.io/services/ai-systems"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://axiomx.space.minimax.io/ar/services/ai-systems"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://axiomx.space.minimax.io/services/ai-systems"/>
+  </url>
+  <url>
+    <loc>https://axiomx.space.minimax.io/ar/services/ai-systems</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://axiomx.space.minimax.io/services/game-development</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://axiomx.space.minimax.io/services/game-development"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://axiomx.space.minimax.io/ar/services/game-development"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://axiomx.space.minimax.io/services/game-development"/>
+  </url>
+  <url>
+    <loc>https://axiomx.space.minimax.io/ar/services/game-development</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://axiomx.space.minimax.io/services/digital-infrastructure</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://axiomx.space.minimax.io/services/digital-infrastructure"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://axiomx.space.minimax.io/ar/services/digital-infrastructure"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://axiomx.space.minimax.io/services/digital-infrastructure"/>
+  </url>
+  <url>
+    <loc>https://axiomx.space.minimax.io/ar/services/digital-infrastructure</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <!-- Articles -->
+  <url>
+    <loc>https://axiomx.space.minimax.io/articles</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://axiomx.space.minimax.io/articles"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://axiomx.space.minimax.io/ar/articles"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://axiomx.space.minimax.io/articles"/>
+  </url>
+  <url>
+    <loc>https://axiomx.space.minimax.io/ar/articles</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <!-- Articles - English -->
+  <url>
+    <loc>https://axiomx.space.minimax.io/articles/future-of-ai-web-development</loc>
+    <lastmod>2026-06-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://axiomx.space.minimax.io/articles/future-of-ai-web-development"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://axiomx.space.minimax.io/ar/articles/future-of-ai-web-development-ar"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://axiomx.space.minimax.io/articles/future-of-ai-web-development"/>
+  </url>
+  <url>
+    <loc>https://axiomx.space.minimax.io/ar/articles/future-of-ai-web-development-ar</loc>
+    <lastmod>2026-06-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://axiomx.space.minimax.io/articles/designing-next-generation</loc>
+    <lastmod>2026-06-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://axiomx.space.minimax.io/articles/designing-next-generation"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://axiomx.space.minimax.io/ar/articles/designing-next-generation-ar"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://axiomx.space.minimax.io/articles/designing-next-generation"/>
+  </url>
+  <url>
+    <loc>https://axiomx.space.minimax.io/ar/articles/designing-next-generation-ar</loc>
+    <lastmod>2026-06-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://axiomx.space.minimax.io/articles/cloud-native-architecture</loc>
+    <lastmod>2026-06-03</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://axiomx.space.minimax.io/articles/cloud-native-architecture"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://axiomx.space.minimax.io/ar/articles/cloud-native-architecture-ar"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://axiomx.space.minimax.io/articles/cloud-native-architecture"/>
+  </url>
+  <url>
+    <loc>https://axiomx.space.minimax.io/articles/react-framework-deep-dive</loc>
+    <lastmod>2026-06-02</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://axiomx.space.minimax.io/articles/react-framework-deep-dive"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://axiomx.space.minimax.io/ar/articles/react-framework-deep-dive-ar"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://axiomx.space.minimax.io/articles/react-framework-deep-dive"/>
+  </url>
+  <url>
+    <loc>https://axiomx.space.minimax.io/ar/articles/react-framework-deep-dive-ar</loc>
+    <lastmod>2026-06-02</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+</urlset>

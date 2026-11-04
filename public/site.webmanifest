@@ -1,0 +1,35 @@
+{
+  "name": "AXIOMX",
+  "short_name": "AXIOMX",
+  "description": "Building the future of digital experiences. Expert software development, AI systems, web applications, mobile apps, UI/UX design, and intelligent digital solutions.",
+  "start_url": "https://axiomx.space.minimax.io/",
+  "display": "standalone",
+  "background_color": "#050505",
+  "theme_color": "#050505",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/favicon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/favicon-256x256.png",
+      "sizes": "256x256",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/favicon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["technology", "business", "productivity"],
+  "lang": "en",
+  "dir": "ltr",
+  "scope": "https://axiomx.space.minimax.io/",
+  "prefer_related_applications": false
+}
