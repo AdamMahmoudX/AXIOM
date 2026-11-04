@@ -7,9 +7,6 @@ import { SEOSettingsProvider } from './context/SEOSettingsContext.tsx'
 import './index.css'
 import App from './App.tsx'
 
-// Simplified initialization - SEO settings will be handled via Context effects
-// Remove problematic SEOWrapper that causes React hooks error
-
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter>
