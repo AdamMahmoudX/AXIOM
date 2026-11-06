@@ -31,7 +31,7 @@ createRoot(document.getElementById('root')!).render(
                   </CategoryProvider>
                 </ServiceProvider>
               </ProjectProvider>
-            </AuthProvider>
+            </EmployeeProvider>
           </AuthProvider>
         </SEOSettingsProvider>
       </LanguageProvider>
