@@ -25,7 +25,7 @@ jobs:
         run: pnpm run typecheck:strict
 
       - name: API typecheck
-        run: pnpm run typecheck:api
+        run: pnpm run typecheck
 
       - name: Lint core modules
         run: pnpm run lint:core
