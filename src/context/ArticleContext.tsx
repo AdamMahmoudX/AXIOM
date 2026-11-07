@@ -3,9 +3,23 @@
 // Phase 4E: Multilingual Content System
 // =====================================================
 
-import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useCallback, useEffect, ReactNode } from 'react';
 import { Article, ArticleStatus, TranslationStatus, calculateTranslationStatus } from '../types/project';
 import { Block } from '../components/blocks/blockTypes';
+import { onAuthStateChanged } from 'firebase/auth';
+import {
+  collection,
+  deleteDoc,
+  doc,
+  onSnapshot,
+  query,
+  setDoc,
+  where,
+  type QuerySnapshot,
+  type DocumentData,
+} from 'firebase/firestore';
+import { firebaseAuth, firestore } from '../config/firebase';
+import { isSiteEditorAccount } from '../config/siteEditor';
 
 // Default empty content structure
 const createEmptyContent = () => ({
@@ -391,9 +405,11 @@ const INITIAL_ARTICLES: Article[] = [
 
 interface ArticleContextType {
   articles: Article[];
-  addArticle: (article: Omit<Article, 'id' | 'createdAt' | 'updatedAt' | 'translationStatus'>) => string;
-  updateArticle: (id: string, updates: Partial<Article>) => void;
-  deleteArticle: (id: string) => void;
+  articlesLoading: boolean;
+  articlesError: string | null;
+  addArticle: (article: Omit<Article, 'id' | 'createdAt' | 'updatedAt' | 'translationStatus'>) => Promise<string>;
+  updateArticle: (id: string, updates: Partial<Article>) => Promise<void>;
+  deleteArticle: (id: string) => Promise<void>;
   getArticle: (id: string) => Article | undefined;
   getArticleBySlug: (slug: string, language: 'en' | 'ar') => Article | undefined;
   getArticlesByCategory: (category: string) => Article[];
@@ -402,22 +418,110 @@ interface ArticleContextType {
     id: string,
     language: 'en' | 'ar',
     content: Partial<Article['content']['en']>
-  ) => void;
+  ) => Promise<void>;
   duplicateContent: (
     id: string,
     fromLang: 'en' | 'ar',
     toLang: 'en' | 'ar'
-  ) => void;
+  ) => Promise<void>;
 }
 
 const ArticleContext = createContext<ArticleContextType | undefined>(undefined);
 
 export const ArticleProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [articles, setArticles] = useState<Article[]>([]);
+  const [articlesLoading, setArticlesLoading] = useState(true);
+  const [articlesError, setArticlesError] = useState<string | null>(null);
+  const [authUid, setAuthUid] = useState<string | null>(null);
+
+  useEffect(() => onAuthStateChanged(firebaseAuth, (user) => {
+    setAuthUid(user?.uid ?? null);
+  }), []);
+
+  useEffect(() => {
+    const publishedArticles = new Map<string, Article>();
+    const adminArticles = new Map<string, Article>();
+    let publishedLoaded = false;
+    let adminLoaded = !authUid || !isSiteEditorAccount(authUid);
+    setArticlesLoading(true);
+    setArticlesError(null);
+
+    const applyArticles = () => {
+      const mergedArticles = new Map([...publishedArticles, ...adminArticles]);
+      setArticles([...mergedArticles.values()].sort((first, second) =>
+        second.createdAt.localeCompare(first.createdAt)
+      ));
+      setArticlesLoading(!(publishedLoaded && adminLoaded));
+    };
+
+    const readSnapshot = (snapshot: QuerySnapshot<DocumentData>): Map<string, Article> => {
+      const snapshotArticles = new Map<string, Article>();
+      for (const articleSnapshot of snapshot.docs) {
+        const data = articleSnapshot.data() as Omit<Article, 'id'> & { id?: string };
+        if (
+          !data.content?.en
+          || !data.content?.ar
+          || !['draft', 'published', 'archived'].includes(data.status)
+        ) continue;
+        snapshotArticles.set(articleSnapshot.id, {
+          ...data,
+          id: articleSnapshot.id,
+          translationStatus: data.translationStatus ?? {
+            en: calculateTranslationStatus(data.content.en),
+            ar: calculateTranslationStatus(data.content.ar),
+          },
+        });
+      }
+      return snapshotArticles;
+    };
+
+    const unsubscribePublished = onSnapshot(
+      query(collection(firestore, 'articles'), where('status', '==', 'published')),
+      (snapshot) => {
+        publishedArticles.clear();
+        for (const [id, article] of readSnapshot(snapshot)) publishedArticles.set(id, article);
+        publishedLoaded = true;
+        applyArticles();
+      },
+      (error) => {
+        console.error('Unable to load published articles from Firestore:', error);
+        setArticlesError(error.message);
+        setArticlesLoading(false);
+      },
+    );
+
+    let unsubscribeAdmin = () => {};
+    if (authUid && isSiteEditorAccount(authUid)) {
+      unsubscribeAdmin = onSnapshot(
+        collection(firestore, 'articles'),
+        (snapshot) => {
+          adminArticles.clear();
+          for (const [id, article] of readSnapshot(snapshot)) adminArticles.set(id, article);
+          adminLoaded = true;
+          applyArticles();
+        },
+        (error) => {
+          console.error('Unable to load CMS articles from Firestore:', error);
+          setArticlesError(error.message);
+          setArticlesLoading(false);
+        },
+      );
+    }
+
+    return () => {
+      unsubscribePublished();
+      unsubscribeAdmin();
+    };
+  }, [authUid]);
 
   const addArticle = useCallback(
-    (articleData: Omit<Article, 'id' | 'createdAt' | 'updatedAt' | 'translationStatus'>) => {
-      const id = `article-${Date.now()}`;
+    async (articleData: Omit<Article, 'id' | 'createdAt' | 'updatedAt' | 'translationStatus'>) => {
+      const currentUser = firebaseAuth.currentUser;
+      if (!currentUser || !isSiteEditorAccount(currentUser.uid)) {
+        throw new Error('ليس لديك صلاحية إضافة المقالات.');
+      }
+      const articleRef = doc(collection(firestore, 'articles'));
+      const id = articleRef.id;
       const now = new Date().toISOString();
       const newArticle: Article = {
         ...articleData,
@@ -429,36 +533,44 @@ export const ArticleProvider: React.FC<{ children: ReactNode }> = ({ children })
           ar: calculateTranslationStatus(articleData.content.ar),
         },
       };
-      setArticles((prev) => [newArticle, ...prev]);
+      await setDoc(articleRef, newArticle);
       return id;
     },
     []
   );
 
-  const updateArticle = useCallback((id: string, updates: Partial<Article>) => {
-    setArticles((prev) =>
-      prev.map((article) =>
-        article.id === id
-          ? {
-              ...article,
-              ...updates,
-              updatedAt: new Date().toISOString(),
-              translationStatus: {
-                en: updates.content?.en
-                  ? calculateTranslationStatus({ ...article.content.en, ...updates.content.en })
-                  : article.translationStatus.en,
-                ar: updates.content?.ar
-                  ? calculateTranslationStatus({ ...article.content.ar, ...updates.content.ar })
-                  : article.translationStatus.ar,
-              },
-            }
-          : article
-      )
-    );
-  }, []);
+  const updateArticle = useCallback(async (id: string, updates: Partial<Article>) => {
+    const currentUser = firebaseAuth.currentUser;
+    if (!currentUser || !isSiteEditorAccount(currentUser.uid)) {
+      throw new Error('ليس لديك صلاحية تعديل المقالات.');
+    }
+    const article = articles.find((item) => item.id === id);
+    if (!article) throw new Error('المقال المطلوب غير موجود.');
 
-  const deleteArticle = useCallback((id: string) => {
-    setArticles((prev) => prev.filter((article) => article.id !== id));
+    const content = {
+      en: updates.content?.en ? { ...article.content.en, ...updates.content.en } : article.content.en,
+      ar: updates.content?.ar ? { ...article.content.ar, ...updates.content.ar } : article.content.ar,
+    };
+    const updatedArticle: Article = {
+      ...article,
+      ...updates,
+      id,
+      content,
+      updatedAt: new Date().toISOString(),
+      translationStatus: {
+        en: calculateTranslationStatus(content.en),
+        ar: calculateTranslationStatus(content.ar),
+      },
+    };
+    await setDoc(doc(firestore, 'articles', id), updatedArticle);
+  }, [articles]);
+
+  const deleteArticle = useCallback(async (id: string) => {
+    const currentUser = firebaseAuth.currentUser;
+    if (!currentUser || !isSiteEditorAccount(currentUser.uid)) {
+      throw new Error('ليس لديك صلاحية حذف المقالات.');
+    }
+    await deleteDoc(doc(firestore, 'articles', id));
   }, []);
 
   const getArticle = useCallback(
@@ -487,76 +599,47 @@ export const ArticleProvider: React.FC<{ children: ReactNode }> = ({ children })
   }, [articles]);
 
   const updateArticleContent = useCallback(
-    (id: string, language: 'en' | 'ar', contentUpdates: Partial<Article['content']['en']>) => {
-      setArticles((prev) =>
-        prev.map((article) => {
-          if (article.id !== id) return article;
-
-          const updatedContent = {
-            ...article.content[language],
-            ...contentUpdates,
-          };
-
-          return {
-            ...article,
-            content: {
-              ...article.content,
-              [language]: updatedContent,
-            },
-            updatedAt: new Date().toISOString(),
-            translationStatus: {
-              ...article.translationStatus,
-              [language]: calculateTranslationStatus(updatedContent),
-            },
-          };
-        })
-      );
+    async (id: string, language: 'en' | 'ar', contentUpdates: Partial<Article['content']['en']>) => {
+      const article = articles.find((item) => item.id === id);
+      if (!article) throw new Error('المقال المطلوب غير موجود.');
+      await updateArticle(id, {
+        content: {
+          ...article.content,
+          [language]: { ...article.content[language], ...contentUpdates },
+        },
+      });
     },
-    []
+    [articles, updateArticle]
   );
 
   const duplicateContent = useCallback(
-    (id: string, fromLang: 'en' | 'ar', toLang: 'en' | 'ar') => {
-      setArticles((prev) =>
-        prev.map((article) => {
-          if (article.id !== id) return article;
-
-          const sourceContent = article.content[fromLang];
-          const duplicatedContent: Article['content']['en'] = {
-            ...sourceContent,
-          };
-
-          // Duplicate blocks
-          const duplicatedBlocks = sourceContent.blocks.map((block) => {
-            const newBlock = { ...block, id: `${block.id}-dup-${Date.now()}` };
-            // Note: In a real implementation, we would use the duplicateBlockContent function
-            return newBlock;
-          });
-
-          duplicatedContent.blocks = duplicatedBlocks;
-
-          return {
-            ...article,
-            content: {
-              ...article.content,
-              [toLang]: duplicatedContent,
-            },
-            updatedAt: new Date().toISOString(),
-            translationStatus: {
-              ...article.translationStatus,
-              [toLang]: calculateTranslationStatus(duplicatedContent),
-            },
-          };
-        })
-      );
+    async (id: string, fromLang: 'en' | 'ar', toLang: 'en' | 'ar') => {
+      const article = articles.find((item) => item.id === id);
+      if (!article) throw new Error('المقال المطلوب غير موجود.');
+      const sourceContent = article.content[fromLang];
+      const duplicatedContent: Article['content']['en'] = {
+        ...sourceContent,
+        blocks: sourceContent.blocks.map((block) => ({
+          ...block,
+          id: `${block.id}-dup-${Date.now()}`,
+        })),
+      };
+      await updateArticle(id, {
+        content: {
+          ...article.content,
+          [toLang]: duplicatedContent,
+        },
+      });
     },
-    []
+    [articles, updateArticle]
   );
 
   return (
     <ArticleContext.Provider
       value={{
         articles,
+        articlesLoading,
+        articlesError,
         addArticle,
         updateArticle,
         deleteArticle,

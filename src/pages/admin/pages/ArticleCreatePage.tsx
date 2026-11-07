@@ -227,7 +227,7 @@ const ArticleCreatePage: React.FC = () => {
       // Calculate read time based on description length
       const readTime = Math.max(1, Math.ceil((content.en.description.length + content.ar.description.length) / 500));
 
-      addArticle({
+      await addArticle({
         title: displayTitle,
         excerpt: displayExcerpt,
         status: formData.status,
@@ -242,11 +242,13 @@ const ArticleCreatePage: React.FC = () => {
         content: content,
       });
 
-      setTimeout(() => {
-        navigate('/admin/articles');
-      }, 500);
+      navigate('/cms/articles');
     } catch (error) {
       console.error('Error creating article:', error);
+      setErrors((previous) => ({
+        ...previous,
+        submit: error instanceof Error ? error.message : 'تعذر حفظ المقال في Firestore.',
+      }));
     } finally {
       setIsSubmitting(false);
     }
@@ -272,7 +274,7 @@ const ArticleCreatePage: React.FC = () => {
       {/* Header */}
       <div className="flex items-center gap-4 mb-6">
         <button
-          onClick={() => navigate('/admin/articles')}
+          onClick={() => navigate('/cms/articles')}
           className="w-10 h-10 rounded-xl bg-white/5 hover:bg-white/10 flex items-center justify-center transition-colors"
         >
           <ArrowRight className={`w-5 h-5 text-gray-400 ${language === 'ar' ? 'rotate-180' : ''}`} />
@@ -289,7 +291,12 @@ const ArticleCreatePage: React.FC = () => {
 
       {/* Form */}
       <div className="max-w-4xl">
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={(event) => { void handleSubmit(event); }} className="space-y-6">
+          {errors.submit && (
+            <p role="alert" className="rounded-xl border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-200">
+              {errors.submit}
+            </p>
+          )}
           {/* Language Tabs */}
           <LanguageTabs
             activeLanguage={activeContentLang}
@@ -621,7 +628,7 @@ const ArticleCreatePage: React.FC = () => {
           <div className="flex items-center gap-3 pt-4 border-t border-white/5">
             <button
               type="button"
-              onClick={() => navigate('/admin/articles')}
+              onClick={() => navigate('/cms/articles')}
               className="flex-1 px-4 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-gray-300 font-medium transition-colors"
             >
               {language === 'ar' ? 'إلغاء' : 'Cancel'}

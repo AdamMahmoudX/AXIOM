@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { LogIn, Eye, EyeOff, Globe } from 'lucide-react';
+import { Eye, EyeOff, Globe } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { User } from '../../types/user';
 import { isApiConfigured } from '../../config/env';
+import { isSiteEditorAccount } from '../../config/siteEditor';
 
 const normalizeIdentifier = (value: string): string => value.trim().toLowerCase();
 const normalizePhone = (value: string): string => value.replace(/\D/g, '');
@@ -12,12 +13,11 @@ const LoginPage: React.FC = () => {
   const navigate = useNavigate();
   const {
     isAuthenticated,
-    isLoading,
     user,
     loginWithCredentials,
     loginWithGoogle,
     getAllUsers,
-    isGoogleOAuthConfigured,
+    isFirebaseAuthConfigured,
   } = useAuth();
   const [stage, setStage] = useState<'identifier' | 'password'>('identifier');
   const [identifier, setIdentifier] = useState('');
@@ -29,7 +29,9 @@ const LoginPage: React.FC = () => {
 
   useEffect(() => {
     if (isAuthenticated && user) {
-      if (user.authStatus === 'pending_review' || user.authStatus === 'pending_registration') {
+      if (isSiteEditorAccount(user.id)) {
+        navigate('/', { replace: true });
+      } else if (user.authStatus === 'pending_review' || user.authStatus === 'pending_registration') {
         navigate('/onboarding/step-1', { replace: true });
       } else if (user.authStatus === 'pending_approval') {
         navigate('/pending-approval', { replace: true });
@@ -114,7 +116,9 @@ const LoginPage: React.FC = () => {
       return;
     }
 
-    if (result.user?.authStatus === 'pending_review' || result.user?.authStatus === 'pending_registration') {
+    if (result.user && isSiteEditorAccount(result.user.id)) {
+      navigate('/', { replace: true });
+    } else if (result.user?.authStatus === 'pending_review' || result.user?.authStatus === 'pending_registration') {
       navigate('/onboarding/step-1', { replace: true });
     } else if (result.user?.authStatus === 'pending_approval') {
       navigate('/pending-approval', { replace: true });
@@ -195,11 +199,21 @@ const LoginPage: React.FC = () => {
 
             <button
               type="button"
-              onClick={handleLogin}
+              onClick={() => { void handleLogin(); }}
               className="w-full rounded-2xl bg-gradient-to-r from-blue-600 to-sky-500 px-5 py-4 text-white font-semibold shadow-lg shadow-blue-500/20 transition hover:brightness-110"
             >
               تسجيل الدخول
             </button>
+            {isFirebaseAuthConfigured && (
+              <button
+                type="button"
+                onClick={() => { void handleGoogleLogin(); }}
+                className="inline-flex w-full items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-5 py-4 text-sm text-white transition hover:bg-white/10"
+              >
+                <Globe className="w-4 h-4" />
+                تسجيل الدخول باستخدام Google
+              </button>
+            )}
           </div>
         ) : stage === 'identifier' ? (
           <div className="space-y-5">
@@ -224,10 +238,10 @@ const LoginPage: React.FC = () => {
                 />
                 تذكرني
               </label>
-              {isGoogleOAuthConfigured && !import.meta.env.PROD && (
+              {isFirebaseAuthConfigured && (
                 <button
                   type="button"
-                  onClick={handleGoogleLogin}
+                  onClick={() => { void handleGoogleLogin(); }}
                   className="inline-flex items-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white transition hover:bg-white/10"
                 >
                   <Globe className="w-4 h-4" />
@@ -303,7 +317,7 @@ const LoginPage: React.FC = () => {
               </button>
               <button
                 type="button"
-                onClick={handleLogin}
+                onClick={() => { void handleLogin(); }}
                 className="rounded-2xl bg-gradient-to-r from-blue-600 to-sky-500 px-5 py-4 text-sm font-semibold text-white shadow-lg shadow-blue-500/20 transition hover:brightness-110"
               >
                 تسجيل الدخول

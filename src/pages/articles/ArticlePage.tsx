@@ -2,13 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import type { ArticleMeta } from '../../content/data/articles';
 import { useLanguage } from '../../context/LanguageContext';
 import { MissingTranslationWarning } from '../../components/MissingTranslationWarning';
 import { useArticles } from '../../context/ArticleContext';
 import { useLanguageSwitch, checkTranslationAvailability, getAvailableLanguage } from '../../utils/LanguageSwitchHelper';
 import { SEOManager, generateCanonicalUrl } from '../../components/seo';
 import { WEBSITE_URL } from '../../utils/structuredData';
+import { getContentByLanguage, type Block } from '../../components/blocks/blockTypes';
+import VideoEmbed, { getVideoEmbedSource } from '../../components/articles/VideoEmbed';
 
 /**
  * =====================================================
@@ -138,7 +139,12 @@ const ArticleContent: React.FC<{ content: string; index?: number }> = ({ content
             }
             return <CodeBlock className={className}>{String(children).replace(/\n$/, '')}</CodeBlock>;
           },
-          a: ({ href, children }) => <ExternalLink href={href || ''}>{children}</ExternalLink>,
+          a: ({ href, children }) => {
+            const videoSource = href ? getVideoEmbedSource(href) : null;
+            return videoSource
+              ? <VideoEmbed url={href || ''} />
+              : <ExternalLink href={href || ''}>{children}</ExternalLink>;
+          },
           img: ({ src, alt }) => (
             <figure className="my-8">
               <div className="relative rounded-xl overflow-hidden border border-white/10 group">
@@ -164,6 +170,56 @@ const ArticleContent: React.FC<{ content: string; index?: number }> = ({ content
   );
 };
 
+const ArticleBlocks: React.FC<{ blocks: Block[]; language: 'en' | 'ar' }> = ({ blocks, language }) => (
+  <div className="space-y-6">
+    {blocks.map((block) => {
+      switch (block.type) {
+        case 'title': {
+          const title = getContentByLanguage(block.content, language);
+          if (block.level === 1) return <h2 key={block.id} className="my-8 text-3xl font-bold text-white">{title}</h2>;
+          if (block.level === 2) return <h3 key={block.id} className="my-6 text-2xl font-bold text-white">{title}</h3>;
+          return <h4 key={block.id} className="my-4 text-xl font-semibold text-sky-300">{title}</h4>;
+        }
+        case 'richText':
+          return <div key={block.id}><ArticleContent content={getContentByLanguage(block.content, language)} /></div>;
+        case 'image': {
+          const alt = getContentByLanguage(block.alt, language);
+          const caption = getContentByLanguage(block.caption, language);
+          return (
+            <figure key={block.id} className="my-8">
+              <img src={block.url} alt={alt} loading="lazy" className="w-full rounded-xl border border-white/10" />
+              {caption && <figcaption className="mt-3 text-center text-sm text-gray-500">{caption}</figcaption>}
+            </figure>
+          );
+        }
+        case 'video':
+          return (
+            <VideoEmbed
+              key={block.id}
+              url={block.url}
+              caption={getContentByLanguage(block.caption, language)}
+            />
+          );
+        case 'quote':
+          return (
+            <blockquote key={block.id} className="my-8 border-s-2 border-blue-500 bg-white/[.03] p-5 text-lg italic text-gray-200">
+              <ArticleContent content={getContentByLanguage(block.content, language)} />
+              {getContentByLanguage(block.author, language) && (
+                <footer className="mt-3 text-sm not-italic text-gray-400">
+                  {getContentByLanguage(block.author, language)}
+                </footer>
+              )}
+            </blockquote>
+          );
+        case 'divider':
+          return <hr key={block.id} className="my-10 border-white/10" />;
+        default:
+          return null;
+      }
+    })}
+  </div>
+);
+
 /**
  * =====================================================
  * #11 ARTICLE PAGE - MAIN ARTICLE PAGE
@@ -171,31 +227,31 @@ const ArticleContent: React.FC<{ content: string; index?: number }> = ({ content
  */
 
 const ArticlePage: React.FC = () => {
-  const { t, isRTL, language, setLanguage } = useLanguage();
+  const { t, isRTL, language } = useLanguage();
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(true);
-  const [article, setArticle] = useState<{ meta: ArticleMeta; content: string } | null>(null);
   const [showContent, setShowContent] = useState(false);
-  const { getArticleBySlug: getArticleFromContext } = useArticles();
-  const { switchLanguage, getAlternativeLanguagePath, getLanguageLabel, getCurrentLanguage } = useLanguageSwitch();
+  const { getArticleBySlug: getArticleFromContext, articlesLoading, articlesError } = useArticles();
+  const { switchLanguage, getLanguageLabel, getCurrentLanguage } = useLanguageSwitch();
 
   // Check translation availability for article from context
   const articleFromContext = getArticleFromContext(slug || '', language);
+  const articleContent = articleFromContext?.content[language];
+  const isLoading = articlesLoading;
   const hasTranslation = articleFromContext
     ? checkTranslationAvailability(articleFromContext.content as Record<string, unknown>, language)
     : true;
   const availableLang = articleFromContext ? getAvailableLanguage(articleFromContext.content) : null;
 
   // SEO: Get article data for SEO Manager
-  const articleTitle = articleFromContext?.content[language]?.title || article?.meta.title || '';
-  const articleDescription = articleFromContext?.content[language]?.description || article?.meta.description || '';
-  const articleExcerpt = articleFromContext?.content[language]?.excerpt || article?.meta.description || '';
+  const articleTitle = articleContent?.title || '';
+  const articleDescription = articleContent?.description || '';
+  const articleExcerpt = articleContent?.excerpt || '';
   const articleSlug = articleFromContext?.content[language]?.slug || slug || '';
   const articleSEO = articleFromContext?.content[language]?.seo;
-  const articleImage = article?.meta.cover || '';
-  const articleAuthor = article?.meta.author || '';
-  const articlePublishedTime = article?.meta.date || '';
+  const articleImage = articleFromContext?.image || '';
+  const articleAuthor = articleFromContext?.authorName || articleFromContext?.author || '';
+  const articlePublishedTime = articleFromContext?.publishedAt || articleFromContext?.createdAt || '';
 
   useEffect(() => {
     if (!slug) {
@@ -203,18 +259,19 @@ const ArticlePage: React.FC = () => {
       return;
     }
 
-    setArticle(null);
-    setIsLoading(false);
-
+    setShowContent(false);
     // Scroll to top on article change
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, [slug, navigate]);
+    if (!articlesLoading && articleFromContext) {
+      requestAnimationFrame(() => setShowContent(true));
+    }
+  }, [slug, navigate, articlesLoading, articleFromContext]);
 
   const handleShare = () => {
     if (navigator.share) {
       navigator.share({
-        title: article?.meta.title,
-        text: article?.meta.description,
+        title: articleTitle,
+        text: articleDescription || articleExcerpt,
         url: window.location.href,
       });
     } else {
@@ -233,7 +290,22 @@ const ArticlePage: React.FC = () => {
     );
   }
 
-  if (!article) {
+  if (articlesError && !articleFromContext) {
+    return (
+      <div className="min-h-screen bg-[#050505] flex items-center justify-center px-6">
+        <div className="text-center">
+          <h1 className="mb-4 text-2xl font-bold text-white">
+            {language === 'ar' ? 'تعذر تحميل المقال' : 'Unable to load this article'}
+          </h1>
+          <p role="alert" className="text-gray-400">
+            {language === 'ar' ? 'تحقق من اتصالك وحاول مرة أخرى لاحقاً.' : 'Check your connection and try again later.'}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!articleFromContext) {
     return (
       <div className="min-h-screen bg-[#050505] flex items-center justify-center">
         <div className="text-center">
@@ -261,8 +333,8 @@ const ArticlePage: React.FC = () => {
         article={{
           publishedTime: articlePublishedTime,
           author: articleAuthor,
-          section: article?.meta.category,
-          tags: article?.meta.tags,
+          section: articleFromContext.category,
+          tags: articleFromContext.tags,
         }}
       />
 
@@ -271,8 +343,8 @@ const ArticlePage: React.FC = () => {
       <div className="relative h-[60vh] min-h-[400px] overflow-hidden">
         <div className="absolute inset-0">
           <img
-            src={article.meta.cover}
-            alt={article.meta.title}
+            src={articleFromContext.image}
+            alt={articleTitle}
             className="w-full h-full object-cover"
            
           />
@@ -303,7 +375,7 @@ const ArticlePage: React.FC = () => {
                 className="inline-block px-4 py-2 text-sm rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30 mb-6"
                
               >
-                {article.meta.category}
+                {articleFromContext.category}
               </span>
 
               <h1
@@ -312,7 +384,7 @@ const ArticlePage: React.FC = () => {
                
               >
                 {/* Use multilingual content from context or fallback to default */}
-                {articleFromContext?.content[language]?.title || article.meta.title}
+                {articleTitle}
               </h1>
 
               <p
@@ -320,7 +392,7 @@ const ArticlePage: React.FC = () => {
                
               >
                 {/* Use multilingual excerpt from context or fallback to default */}
-                {articleFromContext?.content[language]?.excerpt || article.meta.description}
+                {articleExcerpt || articleDescription}
               </p>
 
               <div className="flex flex-wrap items-center justify-center gap-6 text-gray-400">
@@ -328,14 +400,14 @@ const ArticlePage: React.FC = () => {
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                   </svg>
-                  {article.meta.author}
+                  {articleAuthor}
                 </span>
 
                 <span className="flex items-center gap-2">
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                   </svg>
-                  {new Date(article.meta.date).toLocaleDateString('en-US', {
+                  {new Date(articlePublishedTime).toLocaleDateString(language === 'ar' ? 'ar' : 'en-US', {
                     year: 'numeric',
                     month: 'long',
                     day: 'numeric'
@@ -346,7 +418,7 @@ const ArticlePage: React.FC = () => {
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
-                  {article.meta.readTime} {t('article.minRead')}
+                  {articleFromContext.readTime} {t('article.minRead')}
                 </span>
 
                 <button
@@ -370,12 +442,20 @@ const ArticlePage: React.FC = () => {
       {/* Article Content */}
       <div className="max-w-4xl mx-auto px-6 py-16">
         <div className={`transition-all duration-700 delay-200 ${showContent ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-          <ArticleContent content={article.content} />
+          {articleContent?.description && (
+            <ArticleContent content={articleContent.description} />
+          )}
+          {articleContent?.blocks.length ? (
+            <ArticleBlocks
+              blocks={articleContent.blocks}
+              language={language}
+            />
+          ) : null}
         </div>
 
         {/* Tags */}
         <div className={`mt-12 flex flex-wrap gap-2 transition-all duration-700 delay-300 ${showContent ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-          {article.meta.tags.map((tag, index) => (
+          {articleFromContext.tags.map((tag, index) => (
             <span
               key={index}
               className="px-4 py-2 text-sm rounded-full bg-white/5 border border-white/10 text-gray-400 hover:text-white hover:border-blue-500/30 transition-colors duration-300"

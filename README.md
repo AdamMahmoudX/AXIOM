@@ -29,22 +29,57 @@ Development mode uses browser storage for local CMS changes and mock authenticat
 Frontend environment variables:
 
 - `VITE_WEBSITE_URL` — canonical site URL for SEO.
-- `VITE_API_BASE_URL` — required for production authentication.
-- Google OAuth variables — currently not production-ready; the OAuth callback and
-  server-side account linking have not been implemented.
+- `VITE_API_BASE_URL` — optional backend API URL for email/password authentication.
+- `VITE_FIREBASE_*` — optional Firebase client configuration overrides; the
+  project's public client configuration is provided by default in
+  `src/config/firebase.ts`.
+
+## Public-site visual editor
+
+The floating **لوحة تحرير الموقع** editor is available on public pages to the
+Firebase account whose UID is allowlisted in both `src/config/siteEditor.ts`
+and `firestore.rules`. Sign in with Google, open a public page, and select an
+element to edit its text, image, link, style, or section order. Social links
+are managed from the editor's social tab and use official brand icons in the
+footer.
+
+Public content is read from Firestore's `siteContent` collection and is shared
+with site visitors. Configure Google as an enabled Firebase Authentication
+provider, add the deployed domain to Firebase's authorized domains, and deploy
+the rules with `firebase deploy --only firestore:rules`. When adding an editor,
+update the UID allowlist in both locations. The Firestore rules allow public
+content reads but restrict writes to the listed UIDs.
 
 ## Deployment status
 
-This repository currently has no runnable backend. The CMS and contact requests
-use browser storage, which is not shared between visitors or devices. Production
-builds therefore disable local mock authentication and do not accept local
-sessions. Do not deploy the admin or registration workflows publicly until a
-backend provides authentication, persistent CMS storage, contact-request storage,
-and server-side authorization.
+The public-site visual editor uses Firebase Authentication and Firestore for
+shared page overrides and social links. Article data is also stored in
+Firestore; other CMS data and contact requests may still use browser storage
+and are not shared between visitors or devices.
+Production builds disable mock authentication. The separate `/admin` CMS and
+registration workflows remain unavailable in production until their data and
+authorization are connected to a production backend.
 
-Public project, article, and service detail pages do not use bundled sample
-content. They remain unavailable until real content is connected to a production
-data source.
+## Article CMS
+
+The article editor is available at `/cms/articles` to the Firebase account
+whose UID is allowlisted in `src/config/siteEditor.ts` and `firestore.rules`.
+Articles are stored in Firestore's `articles` collection. Published articles are
+readable by visitors, while drafts and article changes are restricted to the
+allowlisted editor. Deploy the Firestore rules before using the CMS in
+production:
+
+```sh
+firebase deploy --only firestore:rules
+```
+
+Video blocks accept canonical YouTube, Facebook, and TikTok video URLs and show
+an embedded player in the article. TikTok short links that require redirect
+resolution are not supported; use the full video URL.
+
+Public project and service detail pages do not use bundled sample content.
+They remain unavailable until real content is connected to a production data
+source.
 
 Set a production API URL and verify its authentication and CMS endpoints before
 publishing. Never ship development credentials or secrets in frontend variables.

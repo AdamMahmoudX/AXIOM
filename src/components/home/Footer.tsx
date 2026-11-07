@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useLanguage } from '../../context/LanguageContext';
 import { useSmoothScroll } from '../../hooks/useSmoothScroll';
 import { AXIOMXLogo } from '../common';
+import SocialLinks from './SocialLinks';
 
 const Footer: React.FC = () => {
   const { t } = useLanguage();
@@ -22,7 +23,7 @@ const Footer: React.FC = () => {
               <AXIOMXLogo />
             </div>
             <p className="text-gray-400 leading-relaxed mb-6 max-w-md">{t('footer.tagline')}</p>
-
+            <SocialLinks />
           </div>
 
           <div>

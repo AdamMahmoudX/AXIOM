@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
 import { ErrorBoundary } from './components/ErrorBoundary.tsx'
 import { AuthProvider } from './context/AuthContext'
+import { SiteContentProvider } from './context/SiteContentContext'
 import { EmployeeProvider } from './context/EmployeeContext'
 import { ProjectProvider } from './context/ProjectContext'
 import { ServiceProvider } from './context/ServiceContext'
@@ -13,25 +14,30 @@ import { SEOSettingsProvider } from './context/SEOSettingsContext.tsx'
 import './index.css'
 import App from './App.tsx'
 
-createRoot(document.getElementById('root')!).render(
+const rootElement = document.getElementById('root')
+if (!rootElement) throw new Error('Root element was not found.')
+
+createRoot(rootElement).render(
   <StrictMode>
     <BrowserRouter>
       <LanguageProvider>
         <SEOSettingsProvider>
           <AuthProvider>
-            <EmployeeProvider>
-              <ProjectProvider>
-                <ServiceProvider>
-                  <CategoryProvider>
-                    <ArticleProvider>
-                      <ErrorBoundary>
-                        <App />
-                      </ErrorBoundary>
-                    </ArticleProvider>
-                  </CategoryProvider>
-                </ServiceProvider>
-              </ProjectProvider>
-            </EmployeeProvider>
+            <SiteContentProvider>
+              <EmployeeProvider>
+                <ProjectProvider>
+                  <ServiceProvider>
+                    <CategoryProvider>
+                      <ArticleProvider>
+                        <ErrorBoundary>
+                          <App />
+                        </ErrorBoundary>
+                      </ArticleProvider>
+                    </CategoryProvider>
+                  </ServiceProvider>
+                </ProjectProvider>
+              </EmployeeProvider>
+            </SiteContentProvider>
           </AuthProvider>
         </SEOSettingsProvider>
       </LanguageProvider>

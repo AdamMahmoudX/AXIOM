@@ -9,7 +9,9 @@ import {
   type User,
 } from '../types/user';
 import { getEffectivePermissions, getFilteredMenuItems, canPerformServiceAction, type MenuItem } from '../types/permissions';
-import { signInWithGoogle, isGoogleOAuthConfigured } from '../services/auth/GoogleOAuthService';
+import { signInWithGoogle, restoreFirebaseUser, isFirebaseAuthConfigured } from '../services/auth/GoogleOAuthService';
+import { signOut as signOutFirebase } from 'firebase/auth';
+import { firebaseAuth } from '../config/firebase';
 import { isApiConfigured } from '../config/env';
 import {
   clearAuthToken,
@@ -61,7 +63,7 @@ interface AuthContextType extends AuthState {
   openLoginModal: () => void;
   closeLoginModal: () => void;
   isLoginModalOpen: boolean;
-  isGoogleOAuthConfigured: boolean;
+  isFirebaseAuthConfigured: boolean;
   hasServiceRole: boolean;
   serviceRole: ServiceRole | undefined;
   getServiceRoleLabel: (language: 'en' | 'ar') => string;
@@ -143,12 +145,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
     const restoreSession = async () => {
       try {
-        if (import.meta.env.PROD && (!isApiConfigured() || !loadAuthToken())) {
-          clearAuthToken();
-          saveSession(null);
-          return;
-        }
-
         if (isApiConfigured() && loadAuthToken()) {
           try {
             const dto = await fetchCurrentUser();
@@ -165,6 +161,23 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
               return;
             }
           }
+        }
+
+        if (isFirebaseAuthConfigured) {
+          await firebaseAuth.authStateReady();
+          const firebaseUser = firebaseAuth.currentUser;
+          if (firebaseUser) {
+            const rememberMe = Boolean(localStorage.getItem(LOCAL_STORAGE_KEY));
+            const user = await restoreFirebaseUser(firebaseUser, rememberMe);
+            if (active) saveSession(user);
+            return;
+          }
+        }
+
+        if (import.meta.env.PROD && (!isApiConfigured() || !loadAuthToken())) {
+          clearAuthToken();
+          saveSession(null);
+          return;
         }
 
         const storedAuth = loadAuthStateFromStorage();
@@ -225,38 +238,14 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const loginWithGoogle = useCallback(async (rememberMe = false): Promise<{ success: boolean; error?: string; user?: User }> => {
     try {
-      if (import.meta.env.PROD) {
-        return { success: false, error: 'تسجيل Google غير متاح قبل ربطه بخادم المصادقة.' };
-      }
-
-      const googleUser = await signInWithGoogle();
-      const storedUsers = loadUserDatabase() as StoredUser[];
-      const existing = storedUsers.find((candidate) =>
-        candidate.googleId === googleUser.googleId ||
-        candidate.email.toLowerCase() === googleUser.email.toLowerCase()
-      );
-      const user = existing
-        ? storeUser({ ...toPublicUser(existing), googleId: googleUser.googleId, rememberMe }, existing.passwordHash)
-        : storeUser({
-            id: `google-${googleUser.googleId}`,
-            username: googleUser.email.split('@')[0],
-            email: googleUser.email,
-            fullName: googleUser.name,
-            avatar: googleUser.avatar,
-            googleId: googleUser.googleId,
-            role: 'employee',
-            authStatus: 'pending_approval',
-            rememberMe,
-            sessionId: generateSessionId(),
-            permissions: DEFAULT_ROLE_PERMISSIONS.employee,
-          }, mockHashPassword(crypto.randomUUID()));
+      const user = await signInWithGoogle(rememberMe);
       saveSession(user);
       return { success: true, user };
     } catch (error) {
       console.error('Google login failed:', error);
       return { success: false, error: error instanceof Error ? error.message : 'تعذر تسجيل الدخول بواسطة Google.' };
     }
-  }, [saveSession, storeUser]);
+  }, [saveSession]);
 
   const registerEmployee = useCallback((registration: RegistrationData) => {
     if (!registration.termsAccepted || !registration.contractRead) {
@@ -332,6 +321,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const logout = useCallback(() => {
     clearAuthToken();
     saveSession(null);
+    void signOutFirebase(firebaseAuth).catch((error: unknown) => {
+      console.error('Unable to sign out of Firebase:', error);
+    });
   }, [saveSession]);
 
   const openLoginModal = useCallback(() => setIsLoginModalOpen(true), []);
@@ -360,7 +352,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     openLoginModal,
     closeLoginModal,
     isLoginModalOpen,
-    isGoogleOAuthConfigured,
+    isFirebaseAuthConfigured,
     hasServiceRole: Boolean(serviceRole),
     serviceRole,
     getServiceRoleLabel: (language) => serviceRole ? SERVICE_ROLE_LABELS[serviceRole][language] : '',

@@ -9,6 +9,7 @@ import { PageLoader } from './components/common';
 import { SharedLayout, HomePage } from './components/home';
 import ProtectedRoute from './components/ProtectedRoute';
 import { AdminChildRoutes } from './routes/adminRoutes';
+import SiteVisualEditor from './components/SiteVisualEditor';
 
 // Lazy loaded public pages
 const ServicePage = lazy(() => import('./pages/services/ServicePage'));
@@ -21,6 +22,10 @@ const EmployeePendingPage = lazy(() => import('./pages/auth/EmployeePendingPage'
 const EmployeeRegistrationWizard = lazy(() => import('./pages/auth/EmployeeRegistrationWizard'));
 const OnboardingWizard = lazy(() => import('./pages/auth/OnboardingWizard'));
 const AdminLayout = lazy(() => import('./layouts/AdminLayout'));
+const ArticlesPage = lazy(() => import('./pages/admin/pages/ArticlesPage'));
+const ArticleCreatePage = lazy(() => import('./pages/admin/pages/ArticleCreatePage'));
+const ArticleEditPage = lazy(() => import('./pages/admin/pages/ArticleEditPage'));
+const ArticleEditorRoute = lazy(() => import('./components/ArticleEditorRoute'));
 
 const publicPages = [
   { path: '/', element: <HomePage /> },
@@ -83,6 +88,10 @@ function App() {
           {createPublicRoutes('/ar')}
 
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/pending-approval" element={<PendingApprovalPage />} />
+          <Route path="/cms/articles" element={<ArticleEditorRoute><ArticlesPage /></ArticleEditorRoute>} />
+          <Route path="/cms/articles/create" element={<ArticleEditorRoute><ArticleCreatePage /></ArticleEditorRoute>} />
+          <Route path="/cms/articles/edit/:id" element={<ArticleEditorRoute><ArticleEditPage /></ArticleEditorRoute>} />
           {import.meta.env.PROD && (
             <>
               <Route path="/admin/*" element={<AdminUnavailablePage />} />
@@ -93,7 +102,6 @@ function App() {
             <>
               <Route path="/employee-registration" element={<EmployeeRegistrationWizard />} />
               <Route path="/employee-pending" element={<EmployeePendingPage />} />
-              <Route path="/pending-approval" element={<PendingApprovalPage />} />
               <Route path="/onboarding/*" element={<OnboardingWizard />} />
 
               <Route path="/admin" element={adminLayout}>
@@ -106,6 +114,7 @@ function App() {
           )}
         </Routes>
       </Suspense>
+      <SiteVisualEditor />
     </>
   );
 }

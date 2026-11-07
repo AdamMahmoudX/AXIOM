@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { useArticles } from '../../../context/ArticleContext';
 import { useLanguage } from '../../../context/LanguageContext';
 import { useAuth } from '../../../context/AuthContext';
+import { isSiteEditorAccount } from '../../../config/siteEditor';
 import { Article, ArticleStatus, ARTICLE_STATUS_LABELS, ARTICLE_STATUS_COLORS } from '../../../types/project';
 import { LanguageBadge, TranslationStatusDisplay } from '../../../components/LanguageTabs';
 import {
@@ -350,14 +351,15 @@ const ArticlesPage: React.FC = () => {
   const navigate = useNavigate();
   const { language } = useLanguage();
   const { user } = useAuth();
-  const { articles, deleteArticle } = useArticles();
+  const { articles, articlesLoading, articlesError, deleteArticle } = useArticles();
 
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<ArticleStatus | 'all'>('all');
   const [languageFilter, setLanguageFilter] = useState<'all' | 'en' | 'ar' | 'both'>('all');
   const [deleteArticleId, setDeleteArticleId] = useState<string | null>(null);
+  const [actionError, setActionError] = useState('');
 
-  const canManageArticles = user?.role === 'owner' || user?.role === 'admin';
+  const canManageArticles = Boolean(user && isSiteEditorAccount(user.id));
 
   const filteredArticles = useMemo(() => {
     return articles.filter(article => {
@@ -382,21 +384,29 @@ const ArticlesPage: React.FC = () => {
   }, [articles, searchQuery, statusFilter, languageFilter]);
 
   const handleViewArticle = (id: string) => {
-    navigate(`/articles/${id}`);
+    const article = articles.find((item) => item.id === id);
+    const articleSlug = article?.content[language]?.slug || article?.content[language === 'en' ? 'ar' : 'en']?.slug;
+    if (articleSlug) navigate(`/articles/${articleSlug}`);
   };
 
   const handleEditArticle = (id: string) => {
-    navigate(`/admin/articles/edit/${id}`);
+    navigate(`/cms/articles/edit/${id}`);
   };
 
   const handleDeleteArticle = (id: string) => {
     setDeleteArticleId(id);
   };
 
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
     if (deleteArticleId) {
-      deleteArticle(deleteArticleId);
-      setDeleteArticleId(null);
+      setActionError('');
+      try {
+        await deleteArticle(deleteArticleId);
+        setDeleteArticleId(null);
+      } catch (error) {
+        console.error('Unable to delete article:', error);
+        setActionError(error instanceof Error ? error.message : 'تعذر حذف المقال من Firestore.');
+      }
     }
   };
 
@@ -418,7 +428,7 @@ const ArticlesPage: React.FC = () => {
 
         {canManageArticles && (
           <button
-            onClick={() => navigate('/admin/articles/create')}
+            onClick={() => navigate('/cms/articles/create')}
             className="px-4 py-3 bg-blue-600 hover:bg-blue-500 rounded-xl text-white font-medium transition-colors flex items-center gap-2"
           >
             <Plus className="w-4 h-4" />
@@ -428,6 +438,12 @@ const ArticlesPage: React.FC = () => {
       </div>
 
       {/* Stats Cards */}
+      {(articlesError || actionError) && (
+        <p role="alert" className="mb-5 rounded-xl border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-200">
+          {actionError || `تعذر تحميل المقالات: ${articlesError}`}
+        </p>
+      )}
+      {articlesLoading && <p className="mb-5 text-sm text-gray-400">{language === 'ar' ? 'جارٍ تحميل المقالات من Firestore...' : 'Loading articles from Firestore...'}</p>}
       <StatsCards articles={articles} />
 
       {/* Search & Filters */}
@@ -497,7 +513,7 @@ const ArticlesPage: React.FC = () => {
       <DeleteModal
         isOpen={!!deleteArticleId}
         onClose={() => setDeleteArticleId(null)}
-        onConfirm={confirmDelete}
+        onConfirm={() => { void confirmDelete(); }}
         articleTitle={articles.find(a => a.id === deleteArticleId)?.title || ''}
       />
     </div>

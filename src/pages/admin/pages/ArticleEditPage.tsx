@@ -44,7 +44,7 @@ const ArticleEditPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { language } = useLanguage();
   const { user } = useAuth();
-  const { getArticle, updateArticle } = useArticles();
+  const { getArticle, updateArticle, articlesLoading } = useArticles();
 
   // Active content language for editing
   const [activeContentLang, setActiveContentLang] = useState<ContentLanguage>('en');
@@ -86,28 +86,24 @@ const ArticleEditPage: React.FC = () => {
 
   // Load article data
   useEffect(() => {
-    if (id) {
-      const article = getArticle(id);
-      if (article) {
-        // Set form data
-        setFormData({
-          title: article.title,
-          excerpt: article.excerpt,
-          image: article.image,
-          status: article.status,
-          category: article.category,
-          tags: article.tags || [],
-          featured: article.featured,
-        });
-
-        // Set multilingual content if exists
-        if (article.content) {
-          setContent(article.content);
-        }
-      }
-      setIsLoading(false);
+    if (articlesLoading) return;
+    const article = id ? getArticle(id) : undefined;
+    if (article) {
+      setFormData({
+        title: article.title,
+        excerpt: article.excerpt,
+        image: article.image,
+        status: article.status,
+        category: article.category,
+        tags: article.tags || [],
+        featured: article.featured,
+      });
+      setContent(article.content);
+    } else if (id) {
+      setErrors({ submit: language === 'ar' ? 'المقال غير موجود أو لا تملك صلاحية الوصول إليه.' : 'Article not found or unavailable.' });
     }
-  }, [id, getArticle]);
+    setIsLoading(false);
+  }, [articlesLoading, getArticle, id, language]);
 
   // Calculate translation status
   const getTranslationStatus = (): { en: TranslationStatus; ar: TranslationStatus } => {
@@ -256,7 +252,7 @@ const ArticleEditPage: React.FC = () => {
       // Calculate read time based on description length
       const readTime = Math.max(1, Math.ceil((content.en.description.length + content.ar.description.length) / 500));
 
-      updateArticle(id, {
+      await updateArticle(id, {
         title: displayTitle,
         excerpt: displayExcerpt,
         status: formData.status,
@@ -269,11 +265,13 @@ const ArticleEditPage: React.FC = () => {
         translationStatus: getTranslationStatus(),
       });
 
-      setTimeout(() => {
-        navigate('/admin/articles');
-      }, 500);
+      navigate('/cms/articles');
     } catch (error) {
       console.error('Error updating article:', error);
+      setErrors((previous) => ({
+        ...previous,
+        submit: error instanceof Error ? error.message : 'تعذر حفظ تعديلات المقال في Firestore.',
+      }));
     } finally {
       setIsSubmitting(false);
     }
@@ -310,7 +308,7 @@ const ArticleEditPage: React.FC = () => {
       {/* Header */}
       <div className="flex items-center gap-4 mb-6">
         <button
-          onClick={() => navigate('/admin/articles')}
+          onClick={() => navigate('/cms/articles')}
           className="w-10 h-10 rounded-xl bg-white/5 hover:bg-white/10 flex items-center justify-center transition-colors"
         >
           <ArrowRight className={`w-5 h-5 text-gray-400 ${language === 'ar' ? 'rotate-180' : ''}`} />
@@ -327,7 +325,12 @@ const ArticleEditPage: React.FC = () => {
 
       {/* Form */}
       <div className="max-w-4xl">
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={(event) => { void handleSubmit(event); }} className="space-y-6">
+          {errors.submit && (
+            <p role="alert" className="rounded-xl border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-200">
+              {errors.submit}
+            </p>
+          )}
           {/* Language Tabs */}
           <LanguageTabs
             activeLanguage={activeContentLang}
@@ -659,7 +662,7 @@ const ArticleEditPage: React.FC = () => {
           <div className="flex items-center gap-3 pt-4 border-t border-white/5">
             <button
               type="button"
-              onClick={() => navigate('/admin/articles')}
+              onClick={() => navigate('/cms/articles')}
               className="flex-1 px-4 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-gray-300 font-medium transition-colors"
             >
               {language === 'ar' ? 'إلغاء' : 'Cancel'}

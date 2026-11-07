@@ -1,0 +1,123 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isSiteEditor() {
+      return request.auth != null
+        && request.auth.uid in ['GyGIzzyfEEfLAA8jfsOzcu6GupF3'];
+    }
+
+    match /articles/{articleId} {
+      function validArticle() {
+        return request.resource.data.keys().hasOnly([
+            'id',
+            'title',
+            'excerpt',
+            'status',
+            'author',
+            'authorId',
+            'authorName',
+            'createdAt',
+            'updatedAt',
+            'publishedAt',
+            'category',
+            'tags',
+            'readTime',
+            'image',
+            'featured',
+            'content',
+            'translationStatus'
+          ])
+          && request.resource.data.id == articleId
+          && request.resource.data.status in ['published', 'draft', 'archived']
+          && request.resource.data.content is map
+          && request.resource.data.content.keys().hasOnly(['en', 'ar'])
+          && request.resource.data.content.keys().hasAll(['en', 'ar'])
+          && request.resource.data.content.en is map
+          && request.resource.data.content.ar is map
+          && request.resource.data.tags is list
+          && request.resource.data.tags.size() <= 30
+          && request.resource.data.content.en.blocks is list
+          && request.resource.data.content.ar.blocks is list
+          && request.resource.data.content.en.blocks.size() <= 100
+          && request.resource.data.content.ar.blocks.size() <= 100;
+      }
+
+      allow read: if resource.data.status == 'published' || isSiteEditor();
+      allow create: if isSiteEditor() && validArticle();
+      allow update: if isSiteEditor() && validArticle();
+      allow delete: if isSiteEditor();
+    }
+
+    match /siteContent/{pageId} {
+      allow read: if true;
+      allow create, update: if isSiteEditor()
+        && (
+          (
+            pageId == 'global'
+            && request.resource.data.keys().hasOnly(['socialLinks'])
+            && request.resource.data.socialLinks is list
+            && request.resource.data.socialLinks.size() <= 30
+          )
+          ||
+          (
+            pageId != 'global'
+            && request.resource.data.keys().hasOnly(['overrides'])
+            && request.resource.data.overrides is map
+            && request.resource.data.overrides.size() <= 300
+          )
+        );
+      allow delete: if false;
+    }
+
+    match /users/{userId} {
+      function isOwner() {
+        return request.auth != null && request.auth.uid == userId;
+      }
+
+      allow read: if isOwner();
+      allow create: if isOwner()
+        && request.resource.data.keys().hasOnly([
+          'id',
+          'username',
+          'email',
+          'role',
+          'fullName',
+          'avatar',
+          'permissions',
+          'authStatus',
+          'createdAt',
+          'lastLogin',
+          'oauthProvider',
+          'googleId'
+        ])
+        && request.resource.data.keys().hasAll([
+          'id',
+          'username',
+          'email',
+          'role',
+          'fullName',
+          'permissions',
+          'authStatus',
+          'createdAt',
+          'lastLogin',
+          'oauthProvider',
+          'googleId'
+        ])
+        && request.resource.data.id == userId
+        && request.resource.data.role == 'employee'
+        && request.resource.data.authStatus == 'pending_approval'
+        && request.resource.data.permissions is map;
+      allow update: if isOwner()
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          'email',
+          'fullName',
+          'avatar',
+          'lastLogin'
+        ])
+        && request.resource.data.role == resource.data.role
+        && request.resource.data.authStatus == resource.data.authStatus;
+      allow delete: if false;
+    }
+  }
+}

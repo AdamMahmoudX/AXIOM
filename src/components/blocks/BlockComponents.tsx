@@ -53,6 +53,7 @@ import {
   AlignRight,
 } from 'lucide-react';
 import { TeamBlockComponent } from './TeamBlockComponent';
+import VideoEmbed from '../articles/VideoEmbed';
 import { LinkPicker } from '../links/LinkPicker';
 import { TextLink } from '../links/RichTextEditor';
 import { getBrokenLinks, LinkType, LINK_TYPE_LABELS } from '../../data/internalLinks';
@@ -798,8 +799,6 @@ const VideoBlockComponent: React.FC<VideoBlockProps> = ({
     onEndEdit();
   };
 
-  const isYouTube = block.url.includes('youtube.com') || block.url.includes('youtu.be');
-
   return (
     <div className="relative group py-2">
       <BlockActionBar
@@ -824,8 +823,13 @@ const VideoBlockComponent: React.FC<VideoBlockProps> = ({
             value={editUrl}
             onChange={(e) => setEditUrl(e.target.value)}
             className="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500/50"
-            placeholder="YouTube URL or direct video URL"
+            placeholder="YouTube, Facebook, or TikTok video URL"
           />
+          <p className="text-xs text-gray-500">
+            {language === 'ar'
+              ? 'ألصق رابط الفيديو؛ سيظهر مشغلاً مضمناً داخل المقال.'
+              : 'Paste a video link to embed the player directly in the article.'}
+          </p>
           <div>
             <label className="text-xs text-gray-500 mb-1 block">🇺🇸 Caption (English)</label>
             <input
@@ -868,26 +872,7 @@ const VideoBlockComponent: React.FC<VideoBlockProps> = ({
           className="cursor-pointer hover:opacity-90 transition-opacity"
         >
           {block.url ? (
-            <figure>
-              {isYouTube ? (
-                <div className="aspect-video rounded-lg overflow-hidden bg-black">
-                  <iframe
-                    src={block.url.replace('watch?v=', 'embed/').replace('youtu.be/', 'www.youtube.com/embed/')}
-                    className="w-full h-full"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                    title="Video"
-                  />
-                </div>
-              ) : (
-                <video src={block.url} controls className="w-full rounded-lg" />
-              )}
-              {(block.caption.en || block.caption.ar) && (
-                <figcaption className="mt-2 text-sm text-gray-500 text-center">
-                  {block.caption.en || block.caption.ar}
-                </figcaption>
-              )}
-            </figure>
+            <VideoEmbed url={block.url} caption={block.caption[language === 'ar' ? 'ar' : 'en'] || block.caption.en || block.caption.ar} />
           ) : (
             <div className="w-full h-48 bg-white/5 rounded-lg flex items-center justify-center">
               <Video className="w-12 h-12 text-gray-600" />
