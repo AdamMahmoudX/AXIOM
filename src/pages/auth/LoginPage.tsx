@@ -61,11 +61,6 @@ const LoginPage: React.FC = () => {
       return;
     }
 
-    if (import.meta.env.PROD && !isApiConfigured()) {
-      setError('تسجيل الدخول غير متاح قبل إعداد خادم المصادقة.');
-      return;
-    }
-
     if (isApiConfigured()) {
       setFoundUser(null);
       setStage('password');
@@ -83,7 +78,7 @@ const LoginPage: React.FC = () => {
   };
 
   const handleLogin = async () => {
-    if (!foundUser && !isApiConfigured()) {
+    if (!foundUser && !isApiConfigured() && !import.meta.env.PROD) {
       setError('حدث خطأ داخلي، يرجى إعادة المحاولة.');
       return;
     }
@@ -149,8 +144,62 @@ const LoginPage: React.FC = () => {
         </div>
 
         {import.meta.env.PROD ? (
-          <div className="rounded-2xl border border-amber-500/20 bg-amber-500/10 p-4 text-sm text-amber-100">
-            لوحة الإدارة غير مفعّلة في نسخة الإنتاج حتى ربط خادم المصادقة وإدارة المحتوى.
+          <div className="space-y-5">
+            <label className="space-y-2 text-sm text-gray-300">
+              <span>البريد الإلكتروني</span>
+              <input
+                type="email"
+                autoComplete="username"
+                value={identifier}
+                onChange={(event) => setIdentifier(event.target.value)}
+                className="w-full rounded-3xl border border-white/10 bg-[#0b1221] px-5 py-4 text-white outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+                placeholder="name@example.com"
+              />
+            </label>
+
+            <label className="relative block text-sm text-gray-300">
+              <span className="mb-2 block">كلمة المرور</span>
+              <input
+                type={showPassword ? 'text' : 'password'}
+                autoComplete="current-password"
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+                className="w-full rounded-3xl border border-white/10 bg-[#0b1221] px-5 py-4 pr-12 text-white outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+                placeholder="***********"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((prev) => !prev)}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white"
+                aria-label="Toggle password visibility"
+              >
+                {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+              </button>
+            </label>
+
+            <label className="flex items-center gap-3 text-sm text-gray-300">
+              <input
+                type="checkbox"
+                checked={rememberMe}
+                onChange={(event) => setRememberMe(event.target.checked)}
+                className="h-4 w-4 rounded border-gray-500 bg-[#0b1221] text-blue-500 focus:ring-blue-500"
+              />
+              تذكرني
+            </label>
+
+            {error && (
+              <div className="rounded-2xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+                {error}
+              </div>
+            )}
+
+            <button
+              type="button"
+              onClick={handleLogin}
+              className="w-full rounded-2xl bg-gradient-to-r from-blue-600 to-sky-500 px-5 py-4 text-white font-semibold shadow-lg shadow-blue-500/20 transition hover:brightness-110"
+            >
+              تسجيل الدخول
+            </button>
           </div>
         ) : stage === 'identifier' ? (
           <div className="space-y-5">

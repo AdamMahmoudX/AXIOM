@@ -37,19 +37,17 @@ const Navigation: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-3">
-          {!import.meta.env.PROD && (
-            <Link
-              to="/login"
-              className="group inline-flex h-10 items-center gap-2 rounded-xl border border-blue-400/30 bg-gradient-to-r from-blue-600 to-blue-500 px-4 text-sm font-semibold text-white shadow-lg shadow-blue-950/30 transition-all duration-300 hover:-translate-y-0.5 hover:border-blue-300/60 hover:from-blue-500 hover:to-blue-400 hover:shadow-blue-500/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 focus-visible:ring-offset-[#050505]"
-              data-guide-id="nav.login"
-              data-guide-name="Log in"
-              data-guide-type="button"
-              data-guide-target="/login"
-            >
-              <LogIn size={16} aria-hidden="true" className={isRTL ? 'rotate-180' : ''} />
-              <span>{t('nav.login')}</span>
-            </Link>
-          )}
+          <Link
+            to="/login"
+            className="group inline-flex h-10 items-center gap-2 rounded-xl border border-blue-400/30 bg-gradient-to-r from-blue-600 to-blue-500 px-4 text-sm font-semibold text-white shadow-lg shadow-blue-950/30 transition-all duration-300 hover:-translate-y-0.5 hover:border-blue-300/60 hover:from-blue-500 hover:to-blue-400 hover:shadow-blue-500/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 focus-visible:ring-offset-[#050505]"
+            data-guide-id="nav.login"
+            data-guide-name="Log in"
+            data-guide-type="button"
+            data-guide-target="/login"
+          >
+            <LogIn size={16} aria-hidden="true" className={isRTL ? 'rotate-180' : ''} />
+            <span>{t('nav.login')}</span>
+          </Link>
           <button
             onClick={() => switchLanguage(getCurrentLanguage() === 'en' ? 'ar' : 'en')}
             className="inline-flex h-10 items-center gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-3 text-sm font-medium text-gray-200 transition-all duration-300 hover:border-blue-400/40 hover:bg-blue-500/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 focus-visible:ring-offset-[#050505]"
