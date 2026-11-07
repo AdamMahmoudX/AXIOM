@@ -546,6 +546,8 @@ const AnalyticsSnapshot: React.FC<AnalyticsSnapshotProps> = ({ services }) => {
 // =====================================================
 
 const ServiceAnalyticsFoundation: React.FC = () => {
+  const { language } = useLanguage();
+
   return (
     <div className="mb-6">
       {/* Section Header */}

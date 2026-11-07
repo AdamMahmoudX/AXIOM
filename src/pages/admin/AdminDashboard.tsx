@@ -85,10 +85,6 @@ const AdminDashboard: React.FC = () => {
                       <UserCircle className="w-12 h-12 text-gray-400" />
                     </div>
                   </div>
-                  {/* Online indicator */}
-                  <div className={`absolute -bottom-1 ${isRTL ? '-left-1' : '-right-1'} w-6 h-6 bg-green-500 rounded-full border-4 border-[#0a0a0a] flex items-center justify-center`}>
-                    <div className="w-2 h-2 bg-white rounded-full" />
-                  </div>
                 </div>
 
                 {/* Username */}

@@ -37,7 +37,9 @@ const ProjectsPage: React.FC = () => {
       {/* Vertical Cards List */}
       <div className="px-6 pb-16">
         <div className="max-w-3xl mx-auto space-y-6">
-          {publicProjects.map((project, index) => {
+          {publicProjects.length === 0 ? (
+            <p className="py-12 text-center text-gray-400">{t('projects.empty')}</p>
+          ) : publicProjects.map((project) => {
             const title = project.content[lang].title || project.name;
             const description = project.shortDescription || project.content[lang].excerpt;
             const slug = project.content.en.slug;
@@ -100,7 +102,7 @@ const ProjectsPage: React.FC = () => {
                       className="flex items-center gap-2 text-blue-400 text-sm"
 
                     >
-                      <span>{t('projects.viewProject') || t('projects.readArticle')}</span>
+                      <span>{t('projects.viewProject')}</span>
                       <svg
                         className={`w-4 h-4 transition-transform duration-300 group-hover:translate-x-1 ${isRTL ? 'rotate-180' : ''}`}
                         fill="none"

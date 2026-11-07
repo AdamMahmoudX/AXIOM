@@ -1,18 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import {
   Menu,
-  Bell,
   ChevronDown,
   LogOut,
-  User,
   Settings,
   ChevronLeft,
   ChevronRight,
-  Moon,
-  Sun,
 } from 'lucide-react';
 
 interface HeaderProps {
@@ -27,7 +23,6 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick, sidebarCollapsed, onSideba
   const navigate = useNavigate();
   const location = useLocation();
   const [currentTime, setCurrentTime] = useState(new Date());
-  const [showNotifications, setShowNotifications] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const isRTL = language === 'ar';
 
@@ -48,12 +43,6 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick, sidebarCollapsed, onSideba
     setLanguage(targetLang);
     navigate(newPath);
   };
-
-  const notifications = [
-    { id: 1, title: t('admin.notification.newProject'), time: '5 ' + t('admin.minAgo'), unread: true },
-    { id: 2, title: t('admin.notification.teamJoined'), time: '1 ' + t('admin.hourAgo'), unread: true },
-    { id: 3, title: t('admin.notification.systemUpdated'), time: '2 ' + t('admin.hoursAgo'), unread: false },
-  ];
 
   // Update time every second
   useEffect(() => {
@@ -82,8 +71,6 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick, sidebarCollapsed, onSideba
     logout();
     navigate('/');
   };
-
-  const unreadCount = notifications.filter((n) => n.unread).length;
 
   return (
     <header className="h-16 bg-[#0a0a0a]/80 backdrop-blur-xl border-b border-white/5 sticky top-0 z-30">
@@ -127,59 +114,6 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick, sidebarCollapsed, onSideba
             {language === 'en' ? 'عربي' : 'EN'}
           </button>
 
-          {/* Notifications */}
-          <div className="relative">
-            <button
-              onClick={() => setShowNotifications(!showNotifications)}
-              className="relative p-2 rounded-lg hover:bg-white/5 text-gray-400 hover:text-white transition-colors"
-            >
-              <Bell className="w-5 h-5" />
-              {unreadCount > 0 && (
-                <span className={`absolute top-1 ${isRTL ? 'left-1' : 'right-1'} w-4 h-4 bg-blue-500 text-white text-xs font-medium rounded-full flex items-center justify-center`}>
-                  {unreadCount}
-                </span>
-              )}
-            </button>
-
-            {/* Notifications dropdown */}
-            {showNotifications && (
-              <div className={`absolute ${isRTL ? 'left-0' : 'right-0'} top-full mt-2 w-80 bg-[#0a0a0a] border border-white/10 rounded-xl shadow-xl overflow-hidden z-50`}>
-                <div className="px-4 py-3 border-b border-white/5">
-                  <h3 className="text-sm font-semibold text-white">
-                    {t('admin.notifications')}
-                  </h3>
-                </div>
-                <div className="max-h-80 overflow-y-auto">
-                  {notifications.map((notification) => (
-                    <div
-                      key={notification.id}
-                      className={`px-4 py-3 border-b border-white/5 hover:bg-white/5 transition-colors cursor-pointer ${
-                        notification.unread ? 'bg-blue-500/5' : ''
-                      }`}
-                    >
-                      <div className={`flex items-start gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                        <div
-                          className={`w-2 h-2 mt-2 rounded-full ${
-                            notification.unread ? 'bg-blue-500' : 'bg-gray-500'
-                          }`}
-                        />
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm text-white text-start">{notification.title}</p>
-                          <p className="text-xs text-gray-500 text-start">{notification.time}</p>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                <div className="px-4 py-3 border-t border-white/5">
-                  <button className="w-full text-center text-sm text-blue-400 hover:text-blue-300 transition-colors">
-                    {t('admin.viewAll')}
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
-
           {/* User menu */}
           <div className="relative">
             <button
@@ -206,14 +140,14 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick, sidebarCollapsed, onSideba
                   <p className="text-xs text-gray-500">{user?.email}</p>
                 </div>
                 <div className="py-2">
-                  <button className={`w-full flex items-center gap-3 px-4 py-2 text-sm text-gray-400 hover:text-white hover:bg-white/5 transition-colors ${isRTL ? 'flex-row-reverse' : ''}`}>
-                    <User className="w-4 h-4" />
-                    {t('admin.profile')}
-                  </button>
-                  <button className={`w-full flex items-center gap-3 px-4 py-2 text-sm text-gray-400 hover:text-white hover:bg-white/5 transition-colors ${isRTL ? 'flex-row-reverse' : ''}`}>
+                  <Link
+                    to={location.pathname.startsWith('/ar/admin') ? '/ar/admin/settings' : '/admin/settings'}
+                    onClick={() => setShowUserMenu(false)}
+                    className={`w-full flex items-center gap-3 px-4 py-2 text-sm text-gray-400 hover:text-white hover:bg-white/5 transition-colors ${isRTL ? 'flex-row-reverse' : ''}`}
+                  >
                     <Settings className="w-4 h-4" />
                     {t('admin.settings')}
-                  </button>
+                  </Link>
                 </div>
                 <div className="border-t border-white/5 py-2">
                   <button

@@ -5,7 +5,6 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { Employee, EmployeePermissions, DEFAULT_ROLE_PERMISSIONS, UserRole, EmployeeStatus } from '../types/user';
-import { MOCK_EMPLOYEES } from '../data/employees';
 
 // Storage key for employees
 const EMPLOYEES_STORAGE_KEY = 'axiomx_employees';
@@ -42,13 +41,12 @@ export const EmployeeProvider: React.FC<{ children: ReactNode }> = ({ children }
   useEffect(() => {
     const storedEmployees = localStorage.getItem(EMPLOYEES_STORAGE_KEY);
     const parsedEmployees = safeJSONParse<Employee[]>(storedEmployees);
+    const employeesInStorage = Array.isArray(parsedEmployees) ? parsedEmployees : [];
 
-    if (parsedEmployees && parsedEmployees.length > 0) {
-      setEmployees(parsedEmployees);
-    } else {
-      // Use mock data if no stored data
-      setEmployees(MOCK_EMPLOYEES);
-      localStorage.setItem(EMPLOYEES_STORAGE_KEY, JSON.stringify(MOCK_EMPLOYEES));
+    const savedEmployees = employeesInStorage.filter((employee) => !/^\d+$/.test(employee.id));
+    setEmployees(savedEmployees);
+    if (!Array.isArray(parsedEmployees) || savedEmployees.length !== employeesInStorage.length) {
+      localStorage.setItem(EMPLOYEES_STORAGE_KEY, JSON.stringify(savedEmployees));
     }
     setIsLoading(false);
   }, []);

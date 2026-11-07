@@ -15,6 +15,8 @@ const ServicesSection: React.FC = () => {
     route: `${prefix}/services/${service.content.en.slug}`,
   }));
 
+  if (services.length === 0) return null;
+
   return (
     <section id="services" className="py-32 bg-[#0B0B0B]">
       <div className="max-w-7xl mx-auto px-6">

@@ -824,7 +824,7 @@ export class SEOCommandActionsManager {
         description: `Executed ${action} in ${result.duration}ms`,
         descriptionAr: `تم تنفيذ ${action} في ${result.duration}ms`,
         timestamp: result.timestamp,
-        severity: result.success ? 'success' : 'error',
+        severity: result.success ? 'success' : 'critical',
         metadata: { action, duration: result.duration },
       });
 
@@ -849,7 +849,7 @@ export class SEOCommandActionsManager {
         description: errorResult.message,
         descriptionAr: errorResult.messageAr,
         timestamp: errorResult.timestamp,
-        severity: 'error',
+        severity: 'critical',
         metadata: { action },
       });
 

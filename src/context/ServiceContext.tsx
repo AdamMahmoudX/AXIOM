@@ -258,6 +258,7 @@ const INITIAL_SERVICES: Service[] = [
     updatedAt: '2024-06-01T14:30:00Z',
     publishedAt: '2024-01-20T10:00:00Z',
     category: 'Web Development',
+    categoryIds: [],
     tags: ['React', 'Node.js', 'TypeScript', 'AWS'],
     image: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=400&h=300&fit=crop',
     gallery: [
@@ -339,6 +340,7 @@ const INITIAL_SERVICES: Service[] = [
     updatedAt: '2024-05-15T16:45:00Z',
     publishedAt: '2024-02-10T09:00:00Z',
     category: 'Mobile Development',
+    categoryIds: [],
     tags: ['React Native', 'Flutter', 'iOS', 'Android'],
     image: 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=400&h=300&fit=crop',
     gallery: [],
@@ -387,6 +389,7 @@ const INITIAL_SERVICES: Service[] = [
     updatedAt: '2024-05-20T09:15:00Z',
     publishedAt: '2024-02-20T11:00:00Z',
     category: 'UI/UX Design',
+    categoryIds: [],
     tags: ['Figma', 'User Research', 'Prototyping', 'Design Systems'],
     image: 'https://images.unsplash.com/photo-1561070791-2526d30994b5?w=400&h=300&fit=crop',
     gallery: [],
@@ -430,6 +433,7 @@ const INITIAL_SERVICES: Service[] = [
     updatedAt: '2024-06-01T11:20:00Z',
     publishedAt: '2024-03-05T08:30:00Z',
     category: 'AI & Machine Learning',
+    categoryIds: [],
     tags: ['Machine Learning', 'NLP', 'Computer Vision', 'AI'],
     image: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=400&h=300&fit=crop',
     gallery: [],
@@ -477,6 +481,7 @@ const INITIAL_SERVICES: Service[] = [
     createdAt: '2024-03-15T14:00:00Z',
     updatedAt: '2024-06-05T10:30:00Z',
     category: 'Game Development',
+    categoryIds: [],
     tags: ['Unity', 'Unreal Engine', 'C#', 'Game Design'],
     image: 'https://images.unsplash.com/photo-1538481199705-c710c4e965c4?w=400&h=300&fit=crop',
     gallery: [],
@@ -520,6 +525,7 @@ const INITIAL_SERVICES: Service[] = [
     updatedAt: '2024-05-30T15:00:00Z',
     publishedAt: '2024-01-25T10:00:00Z',
     category: 'DevOps & Cloud',
+    categoryIds: [],
     tags: ['AWS', 'Docker', 'Kubernetes', 'Terraform'],
     image: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=400&h=300&fit=crop',
     gallery: [],
@@ -568,6 +574,7 @@ const INITIAL_SERVICES: Service[] = [
     updatedAt: '2024-02-15T14:00:00Z',
     publishedAt: '2023-11-15T09:00:00Z',
     category: 'E-commerce',
+    categoryIds: [],
     tags: ['Shopify', 'WooCommerce', 'Payment Gateway', 'Inventory'],
     image: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=300&fit=crop',
     gallery: [],
@@ -739,11 +746,11 @@ export const ServiceProvider: React.FC<{ children: ReactNode }> = ({ children })
 
   useEffect(() => {
     const stored = loadFromStorage<Service[]>(SERVICES_STORAGE_KEY);
-    if (stored && stored.length > 0) {
-      setServices(stored);
-    } else {
-      setServices(INITIAL_SERVICES);
-      saveToStorage(SERVICES_STORAGE_KEY, INITIAL_SERVICES);
+    const storedServices = Array.isArray(stored) ? stored : [];
+    const savedServices = storedServices.filter((service) => !/^svc-\d+$/.test(service.id));
+    setServices(savedServices);
+    if (!Array.isArray(stored) || savedServices.length !== storedServices.length) {
+      saveToStorage(SERVICES_STORAGE_KEY, savedServices);
     }
     setIsLoaded(true);
   }, []);

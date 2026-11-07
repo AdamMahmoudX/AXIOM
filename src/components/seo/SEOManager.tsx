@@ -8,13 +8,14 @@ import React, { useEffect, useCallback } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useLanguage } from '../../context/LanguageContext';
 import { SEOContent } from '../../types/project';
+import { SITE_URL } from '../../config/env';
 
 // Default SEO values
 const DEFAULT_SEO = {
   siteName: 'AXIOMX',
   siteNameAr: 'AXIOMX',
-  baseUrl: 'https://axiomx.space.minimax.io',
-  defaultImage: 'https://axiomx.space.minimax.io/axiomx-logo.png',
+  baseUrl: SITE_URL,
+  defaultImage: `${SITE_URL}/axiomx-logo.png`,
 };
 
 // Props interface for SEOManager

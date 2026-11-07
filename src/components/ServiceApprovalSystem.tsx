@@ -273,7 +273,7 @@ export const ApprovalActionPanel: React.FC<ApprovalActionPanelProps> = ({
     if (currentStatus !== 'review') return [];
 
     // Only users with publish permission can approve
-    if (!user?.permissions?.includes('service_publish')) return [];
+    if (!user?.permissions?.service_publish) return [];
 
     return APPROVAL_ACTIONS;
   }, [currentStatus, user]);

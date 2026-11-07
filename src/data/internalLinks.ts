@@ -41,7 +41,7 @@ export const LINK_TYPE_ICONS: Record<LinkType, string> = {
 // PROJECTS LINKS
 // =====================================================
 
-export const PROJECT_LINKS: InternalLink[] = [
+const DEMO_PROJECT_LINKS: InternalLink[] = [
   {
     id: 'proj-001',
     type: 'project',
@@ -153,7 +153,7 @@ export const PROJECT_LINKS: InternalLink[] = [
 // ARTICLES LINKS
 // =====================================================
 
-export const ARTICLE_LINKS: InternalLink[] = [
+const DEMO_ARTICLE_LINKS: InternalLink[] = [
   {
     id: 'article-cybersecurity',
     type: 'article',
@@ -216,7 +216,7 @@ export const ARTICLE_LINKS: InternalLink[] = [
 // SERVICES LINKS
 // =====================================================
 
-export const SERVICE_LINKS: InternalLink[] = [
+const DEMO_SERVICE_LINKS: InternalLink[] = [
   {
     id: 'service-web',
     type: 'service',
@@ -264,6 +264,10 @@ export const SERVICE_LINKS: InternalLink[] = [
 // =====================================================
 // ALL LINKS COMBINED
 // =====================================================
+
+export const PROJECT_LINKS: InternalLink[] = [];
+export const ARTICLE_LINKS: InternalLink[] = [];
+export const SERVICE_LINKS: InternalLink[] = [];
 
 export const ALL_LINKS: InternalLink[] = [
   ...PROJECT_LINKS,

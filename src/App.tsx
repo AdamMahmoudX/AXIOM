@@ -1,29 +1,46 @@
-import React, { useState, useEffect, useCallback, lazy, Suspense } from 'react';
-import { Routes, Route, useNavigate } from 'react-router-dom';
+import React, { lazy, Suspense } from 'react';
+import { Routes, Route, Link, useNavigate } from 'react-router-dom';
 
 // Hooks
 import { useAxiomXLoginShortcut } from './hooks/useKeyboardShortcut';
 
 // Components
 import { PageLoader } from './components/common';
-import { IntroAnimation } from './components/animations';
 import { SharedLayout, HomePage } from './components/home';
 import ProtectedRoute from './components/ProtectedRoute';
-import AdminLayout from './layouts/AdminLayout';
 import { AdminChildRoutes } from './routes/adminRoutes';
-
-// Pages - Auth
-import LoginPage from './pages/auth/LoginPage';
-import PendingApprovalPage from './pages/auth/PendingApprovalPage';
-import EmployeePendingPage from './pages/auth/EmployeePendingPage';
-import EmployeeRegistrationWizard from './pages/auth/EmployeeRegistrationWizard';
-import OnboardingWizard from './pages/auth/OnboardingWizard';
 
 // Lazy loaded public pages
 const ServicePage = lazy(() => import('./pages/services/ServicePage'));
 const ArticlePage = lazy(() => import('./pages/articles/ArticlePage'));
 const ProjectsPagePublic = lazy(() => import('./pages/projects/ProjectsPage'));
 const ProjectDetailPage = lazy(() => import('./pages/projects/ProjectDetailPage'));
+const LoginPage = lazy(() => import('./pages/auth/LoginPage'));
+const PendingApprovalPage = lazy(() => import('./pages/auth/PendingApprovalPage'));
+const EmployeePendingPage = lazy(() => import('./pages/auth/EmployeePendingPage'));
+const EmployeeRegistrationWizard = lazy(() => import('./pages/auth/EmployeeRegistrationWizard'));
+const OnboardingWizard = lazy(() => import('./pages/auth/OnboardingWizard'));
+const AdminLayout = lazy(() => import('./layouts/AdminLayout'));
+
+const publicPages = [
+  { path: '/', element: <HomePage /> },
+  { path: '/projects', element: <ProjectsPagePublic /> },
+  { path: '/projects/:projectSlug', element: <ProjectDetailPage /> },
+  { path: '/services/:serviceId', element: <ServicePage /> },
+  { path: '/articles/:slug', element: <ArticlePage /> },
+];
+
+const createPublicRoutes = (prefix = '') =>
+  publicPages.map(({ path, element }) => {
+    const routePath = path === '/' ? prefix || '/' : `${prefix}${path}`;
+    return (
+      <Route
+        key={routePath}
+        path={routePath}
+        element={<SharedLayout>{element}</SharedLayout>}
+      />
+    );
+  });
 
 const KeyboardShortcutHandler: React.FC = () => {
   const navigate = useNavigate();
@@ -31,25 +48,23 @@ const KeyboardShortcutHandler: React.FC = () => {
   return null;
 };
 
+const AdminUnavailablePage: React.FC = () => (
+  <main className="min-h-screen bg-[#050505] flex items-center justify-center p-6 text-center">
+    <div className="max-w-lg">
+      <h1 className="text-2xl font-bold text-white">لوحة الإدارة غير متاحة / Admin unavailable</h1>
+      <p className="mt-3 text-gray-400">
+        يلزم ربط خادم مصادقة وإدارة محتوى دائمة قبل تفعيلها.
+        Authentication and persistent CMS services are required before enabling it.
+      </p>
+      <Link to="/" className="mt-6 inline-block text-blue-400 hover:text-blue-300">
+        العودة للرئيسية / Back to home
+      </Link>
+    </div>
+  </main>
+);
+
 const AppWithIntro: React.FC = () => {
-  const [showIntro, setShowIntro] = useState(true);
-
-  useEffect(() => {
-    const hasSeenIntro = localStorage.getItem('axiomx_intro_seen');
-    if (hasSeenIntro) setShowIntro(false);
-  }, []);
-
-  const handleIntroComplete = useCallback(() => {
-    localStorage.setItem('axiomx_intro_seen', 'true');
-    setShowIntro(false);
-  }, []);
-
-  return (
-    <>
-      {showIntro && <IntroAnimation onComplete={handleIntroComplete} />}
-      <App />
-    </>
-  );
+  return <App />;
 };
 
 function App() {
@@ -64,31 +79,31 @@ function App() {
       <KeyboardShortcutHandler />
       <Suspense fallback={<PageLoader />}>
         <Routes>
-          <Route path=\"/\" element={<SharedLayout><HomePage /></SharedLayout>} />
-          <Route path=\"/projects\" element={<SharedLayout><ProjectsPagePublic /></SharedLayout>} />
-          <Route path=\"/projects/:projectSlug\" element={<SharedLayout><ProjectDetailPage /></SharedLayout>} />
-          <Route path=\"/services/:serviceId\" element={<SharedLayout><ServicePage /></SharedLayout>} />
-          <Route path=\"/articles/:slug\" element={<SharedLayout><ArticlePage /></SharedLayout>} />
+          {createPublicRoutes()}
+          {createPublicRoutes('/ar')}
 
-          <Route path=\"/ar\" element={<SharedLayout><HomePage /></SharedLayout>} />
-          <Route path=\"/ar/\" element={<SharedLayout><HomePage /></SharedLayout>} />
-          <Route path=\"/ar/projects\" element={<SharedLayout><ProjectsPagePublic /></SharedLayout>} />
-          <Route path=\"/ar/projects/:projectSlug\" element={<SharedLayout><ProjectDetailPage /></SharedLayout>} />
-          <Route path=\"/ar/services/:serviceId\" element={<SharedLayout><ServicePage /></SharedLayout>} />
-          <Route path=\"/ar/articles/:slug\" element={<SharedLayout><ArticlePage /></SharedLayout>} />
+          <Route path="/login" element={<LoginPage />} />
+          {import.meta.env.PROD && (
+            <>
+              <Route path="/admin/*" element={<AdminUnavailablePage />} />
+              <Route path="/ar/admin/*" element={<AdminUnavailablePage />} />
+            </>
+          )}
+          {import.meta.env.DEV && (
+            <>
+              <Route path="/employee-registration" element={<EmployeeRegistrationWizard />} />
+              <Route path="/employee-pending" element={<EmployeePendingPage />} />
+              <Route path="/pending-approval" element={<PendingApprovalPage />} />
+              <Route path="/onboarding/*" element={<OnboardingWizard />} />
 
-          <Route path=\"/login\" element={<LoginPage />} />
-          <Route path=\"/employee-registration\" element={<EmployeeRegistrationWizard />} />
-          <Route path=\"/employee-pending\" element={<EmployeePendingPage />} />
-          <Route path=\"/pending-approval\" element={<PendingApprovalPage />} />
-          <Route path=\"/onboarding/*\" element={<OnboardingWizard />} />
-
-          <Route path=\"/admin\" element={adminLayout}>
-            <AdminChildRoutes />
-          </Route>
-          <Route path=\"/ar/admin\" element={adminLayout}>
-            <AdminChildRoutes />
-          </Route>
+              <Route path="/admin" element={adminLayout}>
+                {AdminChildRoutes}
+              </Route>
+              <Route path="/ar/admin" element={adminLayout}>
+                {AdminChildRoutes}
+              </Route>
+            </>
+          )}
         </Routes>
       </Suspense>
     </>

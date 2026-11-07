@@ -9,7 +9,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { useLanguage } from '../../../context/LanguageContext';
 import { useAuth } from '../../../context/AuthContext';
 import { useEmployees } from '../../../context/EmployeeContext';
-import { UserRole, ROLE_LABELS, Employee, EmployeePermissions } from '../../../types/user';
+import { DEFAULT_ROLE_PERMISSIONS as SYSTEM_ROLE_DEFAULT_PERMISSIONS, UserRole, ROLE_LABELS, Employee, EmployeePermissions } from '../../../types/user';
 import { ROLE_PERMISSIONS, Permission } from '../../../types/permissions';
 import {
   Shield,
@@ -161,6 +161,7 @@ const PERMISSION_CATEGORIES: PermissionCategory[] = [
 // Default permissions for each role
 const DEFAULT_ROLE_PERMISSIONS: Record<UserRole, EmployeePermissions> = {
   owner: {
+    ...SYSTEM_ROLE_DEFAULT_PERMISSIONS.owner,
     projects_view: true, projects_create: true, projects_edit: true, projects_delete: true,
     services_view: true, services_manage: true,
     articles_view: true, articles_create: true, articles_edit: true, articles_delete: true,
@@ -171,6 +172,7 @@ const DEFAULT_ROLE_PERMISSIONS: Record<UserRole, EmployeePermissions> = {
     permissions_view: true, permissions_manage: true,
   },
   admin: {
+    ...SYSTEM_ROLE_DEFAULT_PERMISSIONS.admin,
     projects_view: true, projects_create: true, projects_edit: true, projects_delete: true,
     services_view: true, services_manage: true,
     articles_view: true, articles_create: true, articles_edit: true, articles_delete: true,
@@ -181,6 +183,7 @@ const DEFAULT_ROLE_PERMISSIONS: Record<UserRole, EmployeePermissions> = {
     permissions_view: true, permissions_manage: false,
   },
   manager: {
+    ...SYSTEM_ROLE_DEFAULT_PERMISSIONS.manager,
     projects_view: true, projects_create: true, projects_edit: true, projects_delete: false,
     services_view: true, services_manage: true,
     articles_view: true, articles_create: true, articles_edit: true, articles_delete: false,
@@ -191,6 +194,7 @@ const DEFAULT_ROLE_PERMISSIONS: Record<UserRole, EmployeePermissions> = {
     permissions_view: true, permissions_manage: false,
   },
   employee: {
+    ...SYSTEM_ROLE_DEFAULT_PERMISSIONS.employee,
     projects_view: true, projects_create: false, projects_edit: false, projects_delete: false,
     services_view: true, services_manage: false,
     articles_view: true, articles_create: false, articles_edit: false, articles_delete: false,

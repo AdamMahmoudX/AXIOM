@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { GridBackground, FloatingParticles } from '../animations';
 import { ClientFormModal } from '../modals';
-import { AXIOMXLogo } from '../common';
 import { useLanguage } from '../../context/LanguageContext';
-import { Link } from 'react-router-dom';
 
 const HeroSection: React.FC = () => {
-  const { t, isRTL } = useLanguage();
+  const { t } = useLanguage();
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [isFormOpen, setIsFormOpen] = useState(false);
 
@@ -53,7 +51,6 @@ const HeroSection: React.FC = () => {
               src="/axiomx-logo.png"
               alt="AXIOMX Logo"
               loading="eager"
-              fetchPriority="high"
               className="relative w-[520px] max-w-full object-contain"
               data-guide-id="hero.logo"
               data-guide-name="Hero AXIOMX Logo"
@@ -78,23 +75,6 @@ const HeroSection: React.FC = () => {
           </p>
         </div>
 
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-          <Link
-            to="/login"
-            className="group relative px-8 py-4 rounded-xl overflow-hidden cursor-pointer bg-white/5 border border-white/10 hover:border-blue-500/50 transition-all duration-300"
-            data-guide-id="hero.login"
-            data-guide-name="Join AXIOMX Team Button"
-            data-guide-type="button"
-            data-guide-target="/login"
-          >
-            <span className="relative text-white font-medium flex items-center gap-2">
-              <svg className={`w-4 h-4 ${isRTL ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
-              </svg>
-              {t('hero.joinTeam')}
-            </span>
-          </Link>
-        </div>
       </div>
 
       <div className="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce">

@@ -373,7 +373,6 @@ export const MENU_ITEMS: MenuItem[] = [
     icon: 'Users',
     route: '/admin/employees',
     permissions: { view: 'team.view', manage: 'team.manage' },
-    badge: '12',
   },
   {
     id: 'projects',
@@ -382,7 +381,6 @@ export const MENU_ITEMS: MenuItem[] = [
     icon: 'FolderKanban',
     route: '/admin/projects',
     permissions: { view: 'projects.view', create: 'projects.create', edit: 'projects.edit', delete: 'projects.delete' },
-    badge: 'new',
   },
   {
     id: 'services',
@@ -417,13 +415,20 @@ export const MENU_ITEMS: MenuItem[] = [
     permissions: { view: 'seo.view' },
   },
   {
+    id: 'chat',
+    label: 'Chat',
+    labelAr: 'المحادثة',
+    icon: 'MessageSquare',
+    route: '/admin/chat',
+    permissions: { view: 'chat.view', use: 'chat.use' },
+  },
+  {
     id: 'messages',
     label: 'Messages',
     labelAr: 'الرسائل',
     icon: 'Mail',
     route: '/admin/messages',
     permissions: { view: 'messages.view', send: 'messages.send' },
-    badge: '3',
   },
   {
     id: 'attachments',

@@ -10,6 +10,19 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   const { isAuthenticated, isLoading, user } = useAuth();
   const location = useLocation();
 
+  if (import.meta.env.PROD) {
+    return (
+      <div className="min-h-screen bg-[#050505] flex items-center justify-center p-6 text-center">
+        <div className="max-w-lg">
+          <h1 className="text-2xl font-bold text-white">لوحة الإدارة غير متاحة</h1>
+          <p className="mt-3 text-gray-400">
+            يلزم ربط خادم مصادقة وواجهة إدارة محتوى دائمة قبل تفعيل لوحة الإدارة في نسخة الإنتاج.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-[#050505] flex items-center justify-center">

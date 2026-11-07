@@ -14,6 +14,7 @@
 // =====================================================
 
 import { Block } from '../components/blocks/blockTypes';
+import { SITE_URL } from '../config/env';
 
 export type ProjectStatus = 'planning' | 'in_progress' | 'completed' | 'on_hold' | 'cancelled';
 
@@ -508,5 +509,5 @@ export const DEFAULT_GLOBAL_SEO_SETTINGS: GlobalSEOSettings = {
   defaultMetaDescription: 'Professional technology solutions and services.',
   defaultMetaDescriptionAr: 'حلول وخدمات تقنية احترافية.',
   defaultKeywords: 'technology, software, development, AI, web',
-  siteUrl: 'https://axiomx.pro',
+  siteUrl: SITE_URL,
 };

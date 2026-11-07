@@ -31,7 +31,20 @@ const relaxedTypeCheckedRules = {
 export default tseslint.config(
   { ignores: ['dist', 'server', 'eslint.config.js', 'postcss.config.js', 'tailwind.config.js'] },
   js.configs.recommended,
-  ...tseslint.configs.recommendedTypeChecked,
+  ...tseslint.configs.recommendedTypeChecked.map((config) => ({
+    ...config,
+    files: config.files ?? ['**/*.{ts,tsx}'],
+  })),
+  {
+    ...tseslint.configs.disableTypeChecked,
+    files: ['**/*.{js,mjs,cjs}'],
+    languageOptions: {
+      globals: {
+        ...globals.browser,
+        ...globals.node,
+      },
+    },
+  },
   {
     files: ['**/*.{ts,tsx}'],
     languageOptions: {

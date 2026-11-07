@@ -9,7 +9,7 @@ import { Block, MultilingualContent, MultilingualCaption } from '../components/b
 const mc = (en: string, ar: string = ''): MultilingualContent => ({ en, ar });
 const mcap = (en: string, ar: string = ''): MultilingualCaption => ({ en, ar });
 
-export const MOCK_PROJECT_CONTENT: Record<string, Block[]> = {
+const DEMO_PROJECT_CONTENT: Record<string, Block[]> = {
   'proj-001': [
     {
       id: 'block-1',
@@ -169,6 +169,8 @@ export const MOCK_PROJECT_CONTENT: Record<string, Block[]> = {
     },
   ],
 };
+
+export const MOCK_PROJECT_CONTENT: Record<string, Block[]> = {};
 
 // Get project content by project ID
 export const getProjectContent = (projectId: string): Block[] => {

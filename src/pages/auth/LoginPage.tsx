@@ -3,13 +3,22 @@ import { useNavigate, Link } from 'react-router-dom';
 import { LogIn, Eye, EyeOff, Globe } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { User } from '../../types/user';
+import { isApiConfigured } from '../../config/env';
 
 const normalizeIdentifier = (value: string): string => value.trim().toLowerCase();
 const normalizePhone = (value: string): string => value.replace(/\D/g, '');
 
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
-  const { isAuthenticated, isLoading, user, loginWithCredentials, loginWithGoogle, getAllUsers } = useAuth();
+  const {
+    isAuthenticated,
+    isLoading,
+    user,
+    loginWithCredentials,
+    loginWithGoogle,
+    getAllUsers,
+    isGoogleOAuthConfigured,
+  } = useAuth();
   const [stage, setStage] = useState<'identifier' | 'password'>('identifier');
   const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
@@ -52,6 +61,17 @@ const LoginPage: React.FC = () => {
       return;
     }
 
+    if (import.meta.env.PROD && !isApiConfigured()) {
+      setError('تسجيل الدخول غير متاح قبل إعداد خادم المصادقة.');
+      return;
+    }
+
+    if (isApiConfigured()) {
+      setFoundUser(null);
+      setStage('password');
+      return;
+    }
+
     const userMatch = findUser(identifier);
     if (!userMatch) {
       setError('لم نعثر على حساب بهذا المعرف. تأكد من البيانات وحاول مرة أخرى.');
@@ -63,7 +83,7 @@ const LoginPage: React.FC = () => {
   };
 
   const handleLogin = async () => {
-    if (!foundUser) {
+    if (!foundUser && !isApiConfigured()) {
       setError('حدث خطأ داخلي، يرجى إعادة المحاولة.');
       return;
     }
@@ -74,7 +94,7 @@ const LoginPage: React.FC = () => {
     }
 
     setError('');
-    const result = await loginWithCredentials(foundUser.username || identifier, password, rememberMe);
+    const result = await loginWithCredentials(foundUser?.username || identifier, password, rememberMe);
 
     if (!result.success) {
       setError(result.error || 'حدث خطأ أثناء تسجيل الدخول.');
@@ -128,7 +148,11 @@ const LoginPage: React.FC = () => {
           </div>
         </div>
 
-        {stage === 'identifier' ? (
+        {import.meta.env.PROD ? (
+          <div className="rounded-2xl border border-amber-500/20 bg-amber-500/10 p-4 text-sm text-amber-100">
+            لوحة الإدارة غير مفعّلة في نسخة الإنتاج حتى ربط خادم المصادقة وإدارة المحتوى.
+          </div>
+        ) : stage === 'identifier' ? (
           <div className="space-y-5">
             <label className="space-y-2 text-sm text-gray-300">
               <span>رقم الهاتف أو المعرف</span>
@@ -151,14 +175,16 @@ const LoginPage: React.FC = () => {
                 />
                 تذكرني
               </label>
-              <button
-                type="button"
-                onClick={handleGoogleLogin}
-                className="inline-flex items-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white transition hover:bg-white/10"
-              >
-                <Globe className="w-4 h-4" />
-                Google
-              </button>
+              {isGoogleOAuthConfigured && !import.meta.env.PROD && (
+                <button
+                  type="button"
+                  onClick={handleGoogleLogin}
+                  className="inline-flex items-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white transition hover:bg-white/10"
+                >
+                  <Globe className="w-4 h-4" />
+                  Google
+                </button>
+              )}
             </div>
 
             {error && (
@@ -187,7 +213,9 @@ const LoginPage: React.FC = () => {
           <div className="space-y-5">
             <div className="rounded-3xl border border-white/10 bg-white/5 p-4">
               <p className="text-xs uppercase tracking-[0.3em] text-slate-400">تسجيل الدخول</p>
-              <p className="mt-2 text-lg font-semibold text-white">مرحباً، {foundUser?.fullName || foundUser?.username}</p>
+              <p className="mt-2 text-lg font-semibold text-white">
+                مرحباً، {foundUser?.fullName || foundUser?.username || identifier}
+              </p>
               <p className="mt-1 text-sm text-gray-400">أدخل كلمة المرور لإكمال الدخول.</p>
             </div>
 
@@ -234,12 +262,12 @@ const LoginPage: React.FC = () => {
             </div>
 
             {/* Register Link in Password Stage */}
-            <div className="text-center text-sm text-gray-400">
+            {!import.meta.env.PROD && <div className="text-center text-sm text-gray-400">
               ليس لديك حساب؟{' '}
               <Link to="/employee-registration" className="text-blue-400 hover:text-blue-300 transition-colors">
                 إنشاء حساب جديد
               </Link>
-            </div>
+            </div>}
           </div>
         )}
       </div>

@@ -303,15 +303,15 @@ const ReportContent: React.FC<ReportContentProps> = ({ reportType, data }) => {
 
   switch (reportType) {
     case 'performance':
-      return <PerformanceReportTable data={data.data} />;
+      return <PerformanceReportTable data={data.data.filter((item): item is PerformanceReportItem => 'status' in item)} />;
     case 'seo':
-      return <SEOReportTable data={data.data} />;
+      return <SEOReportTable data={data.data.filter((item): item is SEOReportItem => 'score' in item)} />;
     case 'translation':
-      return <TranslationReportTable data={data.data} />;
+      return <TranslationReportTable data={data.data.filter((item): item is TranslationReportItem => 'overallStatus' in item)} />;
     case 'category':
-      return <CategoryReportTable data={data.data} />;
+      return <CategoryReportTable data={data.data.filter((item): item is CategoryReportItem => 'category' in item)} />;
     case 'relationships':
-      return <RelationshipsReportTable data={data.data} />;
+      return <RelationshipsReportTable data={data.data.filter((item): item is RelationshipsReportItem => 'related' in item)} />;
     default:
       return null;
   }
@@ -639,7 +639,7 @@ const generateTranslationReport = (services: Service[], language: string): Repor
     const enStatus = service.translationStatus?.en || 'missing';
     const arStatus = service.translationStatus?.ar || 'missing';
 
-    let overallStatus: string;
+    let overallStatus: TranslationReportItem['overallStatus'];
     if (enStatus === 'complete' && arStatus === 'complete') {
       overallStatus = 'complete';
     } else if (enStatus === 'complete' || arStatus === 'complete') {

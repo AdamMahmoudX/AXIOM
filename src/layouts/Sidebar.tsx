@@ -2,7 +2,7 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
-import { MENU_ITEMS, getFilteredMenuItems } from '../types/permissions';
+import { getFilteredMenuItems } from '../types/permissions';
 import {
   LayoutDashboard,
   FolderKanban,
@@ -45,18 +45,12 @@ interface SidebarProps {
 const Sidebar: React.FC<SidebarProps> = ({ collapsed, mobileOpen, onMobileClose }) => {
   const location = useLocation();
   const { user } = useAuth();
-  const { language, t } = useLanguage();
+  const { language } = useLanguage();
   const isRTL = language === 'ar';
 
   // Get filtered menu items based on user role
-  const menuItems = user?.role ? getFilteredMenuItems(user.role) : [];
-
-  // Get translated badge
-  const getTranslatedBadge = (badge: string | undefined) => {
-    if (!badge) return badge;
-    if (badge === 'new') return language === 'ar' ? 'جديد' : 'new';
-    return badge;
-  };
+  const menuItems = user?.role ? getFilteredMenuItems(user.role, user.serviceRole) : [];
+  const adminPrefix = location.pathname.startsWith('/ar/admin') ? '/ar/admin' : '/admin';
 
   const sidebarContent = (
     <div
@@ -98,12 +92,15 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, mobileOpen, onMobileClose 
         <ul className="space-y-1">
           {menuItems.map((item) => {
             const Icon = iconMap[item.icon] || LayoutDashboard;
-            const isActive = location.pathname === item.route;
+            const route = item.route.replace(/^\/admin/, adminPrefix);
+            const isActive =
+              location.pathname === route ||
+              (route !== adminPrefix && location.pathname.startsWith(`${route}/`));
 
             return (
               <li key={item.id}>
                 <Link
-                  to={item.route}
+                  to={route}
                   onClick={onMobileClose}
                   className={`flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-200 group relative ${
                     isActive
@@ -115,16 +112,6 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, mobileOpen, onMobileClose 
                   {!collapsed && (
                     <span className="text-sm font-medium flex-1">
                       {language === 'ar' ? item.labelAr : item.label}
-                    </span>
-                  )}
-                  {!collapsed && item.badge && (
-                    <span className="px-2 py-0.5 text-xs font-medium bg-blue-500/20 text-blue-400 rounded-full">
-                      {getTranslatedBadge(item.badge)}
-                    </span>
-                  )}
-                  {collapsed && item.badge && (
-                    <span className={`absolute -top-1 ${isRTL ? '-left-1' : '-right-1'} w-5 h-5 text-xs font-medium bg-blue-500 text-white rounded-full flex items-center justify-center`}>
-                      {getTranslatedBadge(item.badge)}
                     </span>
                   )}
                   {isActive && (

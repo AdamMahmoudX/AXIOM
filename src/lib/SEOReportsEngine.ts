@@ -5,6 +5,8 @@
 // =====================================================
 
 // Types
+import type { Article, Project } from '../types/project';
+
 export interface SEOContentItem {
   id: string;
   type: 'project' | 'article';
@@ -134,41 +136,26 @@ export const detectSEOIssues = (item: SEOContentItem): SEOIssue[] => {
 };
 
 // Process projects for SEO report
-export const processProjects = (projects: Array<{
-  id: string;
-  slug: string;
-  content: {
-    en: {
-      title: string;
-      titleAr?: string;
-      seo: {
-        title?: string;
-        description?: string;
-        focusKeyword?: string;
-        openGraph?: {
-          title?: string;
-          description?: string;
-          image?: string;
-        };
-      };
-    };
-  };
-}>): SEOContentItem[] => {
+export const processProjects = (projects: Project[]): SEOContentItem[] => {
   return projects.map((project) => {
-    const seo = project.content.en.seo || {};
+    const seo = project.content.en.seo;
     const score = calculateSEOConfigScore(seo);
 
     const item: SEOContentItem = {
       id: project.id,
       type: 'project',
       title: project.content.en.title,
-      titleAr: project.content.en.titleAr,
-      slug: project.slug,
+      titleAr: project.content.ar.title,
+      slug: project.content.en.slug,
       seo: {
         title: seo.title,
         description: seo.description,
         focusKeyword: seo.focusKeyword,
-        openGraph: seo.openGraph,
+        openGraph: {
+          title: seo.ogTitle,
+          description: seo.ogDescription,
+          image: seo.ogImage,
+        },
       },
       score,
       issues: [],
@@ -180,41 +167,26 @@ export const processProjects = (projects: Array<{
 };
 
 // Process articles for SEO report
-export const processArticles = (articles: Array<{
-  id: string;
-  slug: string;
-  content: {
-    en: {
-      title: string;
-      titleAr?: string;
-      seo: {
-        title?: string;
-        description?: string;
-        focusKeyword?: string;
-        openGraph?: {
-          title?: string;
-          description?: string;
-          image?: string;
-        };
-      };
-    };
-  };
-}>): SEOContentItem[] => {
+export const processArticles = (articles: Article[]): SEOContentItem[] => {
   return articles.map((article) => {
-    const seo = article.content.en.seo || {};
+    const seo = article.content.en.seo;
     const score = calculateSEOConfigScore(seo);
 
     const item: SEOContentItem = {
       id: article.id,
       type: 'article',
       title: article.content.en.title,
-      titleAr: article.content.en.titleAr,
-      slug: article.slug,
+      titleAr: article.content.ar.title,
+      slug: article.content.en.slug,
       seo: {
         title: seo.title,
         description: seo.description,
         focusKeyword: seo.focusKeyword,
-        openGraph: seo.openGraph,
+        openGraph: {
+          title: seo.ogTitle,
+          description: seo.ogDescription,
+          image: seo.ogImage,
+        },
       },
       score,
       issues: [],
@@ -246,46 +218,8 @@ export const aggregateSEOIssues = (items: SEOContentItem[]): SEOIssue[] => {
 
 // Generate complete SEO report
 export const generateSEOReport = (
-  projects: Array<{
-    id: string;
-    slug: string;
-    content: {
-      en: {
-        title: string;
-        titleAr?: string;
-        seo: {
-          title?: string;
-          description?: string;
-          focusKeyword?: string;
-          openGraph?: {
-            title?: string;
-            description?: string;
-            image?: string;
-          };
-        };
-      };
-    };
-  }>,
-  articles: Array<{
-    id: string;
-    slug: string;
-    content: {
-      en: {
-        title: string;
-        titleAr?: string;
-        seo: {
-          title?: string;
-          description?: string;
-          focusKeyword?: string;
-          openGraph?: {
-            title?: string;
-            description?: string;
-            image?: string;
-          };
-        };
-      };
-    };
-  }>
+  projects: Project[],
+  articles: Article[],
 ): SEOReport => {
   // Process items
   const processedProjects = processProjects(projects);

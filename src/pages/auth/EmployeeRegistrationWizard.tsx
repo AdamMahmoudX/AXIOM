@@ -1,7 +1,6 @@
 import React, { useMemo, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { signInWithGoogle } from '../../services/auth/GoogleOAuthService';
 
 interface FilePreview {
   file?: File;
@@ -19,9 +18,6 @@ interface RegistrationState {
   isVerified: boolean;
   password: string;
   confirmPassword: string;
-  googleId?: string;
-  googleName?: string;
-  googleAvatar?: string;
   profilePhoto?: FilePreview;
   idCardFront?: FilePreview;
   idCardBack?: FilePreview;
@@ -232,7 +228,6 @@ const EmployeeRegistrationWizard: React.FC = () => {
   });
   const [message, setMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [googleStatus, setGoogleStatus] = useState('');
   const [submissionError, setSubmissionError] = useState('');
   const { registerEmployee } = useAuth();
   const navigate = useNavigate();
@@ -273,20 +268,6 @@ const EmployeeRegistrationWizard: React.FC = () => {
     }
     updateField('isVerified', true);
     setMessage('تم التحقق من رقم الهاتف بنجاح.');
-  };
-
-  const handleGoogleLink = async () => {
-    setGoogleStatus('جارٍ ربط حساب Google...');
-    try {
-      const result = await signInWithGoogle();
-      updateField('googleId', result.googleId);
-      updateField('googleName', result.name);
-      updateField('googleAvatar', result.avatar);
-      setGoogleStatus(`تم ربط Google: ${result.name}`);
-    } catch (error) {
-      console.error(error);
-      setGoogleStatus('تعذر ربط حساب Google في الوقت الحالي.');
-    }
   };
 
   const stepValidations = [
@@ -370,7 +351,6 @@ const EmployeeRegistrationWizard: React.FC = () => {
         phone: state.phone,
         country: state.country,
         password: state.password,
-        googleId: state.googleId,
         rememberMe: false,
         profilePhotoUrl,
         idCardFrontUrl,
@@ -394,6 +374,19 @@ const EmployeeRegistrationWizard: React.FC = () => {
       setIsSubmitting(false);
     }
   };
+
+  if (import.meta.env.PROD) {
+    return (
+      <main className="min-h-screen bg-[#050505] flex items-center justify-center p-6 text-center">
+        <div className="max-w-lg">
+          <h1 className="text-2xl font-bold text-white">التسجيل غير متاح</h1>
+          <p className="mt-3 text-gray-400">
+            يلزم ربط خدمة تسجيل وتحقق حقيقية قبل استقبال بيانات الموظفين.
+          </p>
+        </div>
+      </main>
+    );
+  }
 
   const renderStepContent = () => {
     switch (step) {
@@ -508,22 +501,6 @@ const EmployeeRegistrationWizard: React.FC = () => {
               </label>
             </div>
 
-            <div className="rounded-3xl border border-white/10 bg-white/5 p-5">
-              <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                <div>
-                  <p className="text-sm font-semibold text-white">ربط حساب Google</p>
-                  <p className="mt-1 text-sm text-gray-400">يمكن ربط حساب Google لتسريع عملية التسجيل.</p>
-                </div>
-                <button
-                  type="button"
-                  onClick={handleGoogleLink}
-                  className="rounded-3xl bg-gradient-to-r from-blue-600 to-blue-500 px-6 py-4 font-semibold text-white shadow-lg shadow-blue-500/20"
-                >
-                  {state.googleId ? 'تم الربط' : 'ربط حساب Google'}
-                </button>
-              </div>
-              {googleStatus && <p className="mt-4 text-sm text-gray-300">{googleStatus}</p>}
-            </div>
           </div>
         );
       case 1:
@@ -636,7 +613,6 @@ const EmployeeRegistrationWizard: React.FC = () => {
               <div className="rounded-3xl border border-white/10 bg-[#0b1221] p-6">
                 <h3 className="text-lg font-semibold text-white">الحالة والمستندات</h3>
                 <ul className="mt-4 space-y-3 text-gray-300">
-                  <li>• Google مرتبط: {state.googleId ? 'نعم' : 'لا'}</li>
                   <li>• تم التحقق من الهاتف: {state.isVerified ? 'نعم' : 'لا'}</li>
                   <li>• تم قراءة العقد: {state.contractRead ? 'نعم' : 'لا'}</li>
                   <li>• تم توقيع العقد: {state.signatureDataUrl ? 'نعم' : 'لا'}</li>

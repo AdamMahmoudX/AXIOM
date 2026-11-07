@@ -51,7 +51,7 @@ import ServiceAnalyticsReports from '../../../components/ServiceAnalyticsReports
 import ServiceAnalyticsExport from '../../../components/ServiceAnalyticsExport';
 import ServiceAnalyticsWidgets from '../../../components/ServiceAnalyticsWidgets';
 import ServiceAnalyticsOverview from '../../../components/ServiceAnalyticsOverview';
-import { WorkflowStatusBadge, ServiceWorkflowControls } from '../../../components/ServiceWorkflowControls';
+import ServiceWorkflowControls, { WorkflowStatusBadge } from '../../../components/ServiceWorkflowControls';
 
 // Status Badge Component
 const StatusBadge: React.FC<{ status: ServiceStatus }> = ({ status }) => {

@@ -1,5 +1,6 @@
 export const SITE_URL =
-  import.meta.env.VITE_WEBSITE_URL ?? 'https://axiomx.space.minimax.io';
+  import.meta.env.VITE_WEBSITE_URL ??
+  (import.meta.env.PROD ? window.location.origin : 'http://localhost:5173');
 
 export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? '';
 

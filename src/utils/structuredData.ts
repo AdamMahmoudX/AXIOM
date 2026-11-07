@@ -42,17 +42,8 @@ export const generateOrganizationSchema = (): OrganizationSchema => ({
   name: 'AXIOMX',
   url: WEBSITE_URL,
   logo: `${WEBSITE_URL}/axiomx-logo.png`,
-  description: 'AXIOMX is a leading technology company specializing in web development, mobile applications, AI systems, and digital transformation solutions.',
-  sameAs: [
-    'https://twitter.com/axiomx',
-    'https://linkedin.com/company/axiomx',
-    'https://github.com/axiomx',
-  ],
-  contactPoint: {
-    '@type': 'ContactPoint',
-    contactType: 'customer service',
-    email: 'contact@axiomx.com',
-  },
+  description: 'AXIOMX technology solutions.',
+  sameAs: [],
 });
 
 // WebSite schema for search
@@ -61,14 +52,6 @@ export interface WebSiteSchema {
   '@type': 'WebSite';
   name: string;
   url: string;
-  potentialAction: {
-    '@type': 'SearchAction';
-    target: {
-      '@type': 'EntryPoint';
-      urlTemplate: string;
-    };
-    'query-input': string;
-  };
 }
 
 export const generateWebSiteSchema = (): WebSiteSchema => ({
@@ -76,14 +59,6 @@ export const generateWebSiteSchema = (): WebSiteSchema => ({
   '@type': 'WebSite',
   name: 'AXIOMX',
   url: WEBSITE_URL,
-  potentialAction: {
-    '@type': 'SearchAction',
-    target: {
-      '@type': 'EntryPoint',
-      urlTemplate: `${WEBSITE_URL}/search?q={search_term_string}`,
-    },
-    'query-input': 'required name=search_term_string',
-  },
 });
 
 // Article schema for blog posts

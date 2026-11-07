@@ -1,41 +1,31 @@
 import React, { useMemo, useState } from 'react';
-import { Activity, Boxes, FileText, FolderKanban, Search } from 'lucide-react';
+import { Activity, Boxes, Search } from 'lucide-react';
 import { useLanguage } from '../../../context/LanguageContext';
 import { useServices } from '../../../context/ServiceContext';
-import { useProjects } from '../../../context/ProjectContext';
-import { useArticles } from '../../../context/ArticleContext';
 import { buildActivityFeed, getRelativeTime } from '../../../utils/activityFeed';
 
 const sourceIcon = {
   service: Boxes,
-  project: FolderKanban,
-  article: FileText,
 } as const;
 
 const sourceColor = {
   service: 'bg-emerald-500/10 text-emerald-400',
-  project: 'bg-blue-500/10 text-blue-400',
-  article: 'bg-amber-500/10 text-amber-400',
 } as const;
 
 const ActivityPage: React.FC = () => {
   const { language } = useLanguage();
   const isRTL = language === 'ar';
   const { auditLogs } = useServices();
-  const { projects } = useProjects();
-  const { articles } = useArticles();
   const [search, setSearch] = useState('');
-  const [filter, setFilter] = useState<'all' | 'service' | 'project' | 'article'>('all');
 
   const activities = useMemo(
-    () => buildActivityFeed({ auditLogs, projects, articles, limit: 100 }),
-    [auditLogs, projects, articles]
+    () => buildActivityFeed({ auditLogs, limit: 100 }),
+    [auditLogs]
   );
 
   const filtered = useMemo(() => {
     const query = search.trim().toLowerCase();
     return activities.filter((item) => {
-      if (filter !== 'all' && item.source !== filter) return false;
       if (!query) return true;
       const haystack = [
         item.titleEn,
@@ -47,7 +37,7 @@ const ActivityPage: React.FC = () => {
         .toLowerCase();
       return haystack.includes(query);
     });
-  }, [activities, filter, search]);
+  }, [activities, search]);
 
   return (
     <div className="space-y-6">
@@ -59,8 +49,8 @@ const ActivityPage: React.FC = () => {
           </h1>
           <p className="text-gray-400 mt-1">
             {language === 'ar'
-              ? 'سجل موحّد لتحديثات الخدمات والمشاريع والمقالات'
-              : 'Unified log of service, project, and article updates'}
+              ? 'سجل تغييرات الخدمات المسجلة فعلياً'
+              : 'Recorded service change history'}
           </p>
         </div>
         <span className="px-3 py-1 text-sm bg-white/5 border border-white/10 rounded-full text-gray-300">
@@ -80,16 +70,6 @@ const ActivityPage: React.FC = () => {
             }`}
           />
         </div>
-        <select
-          value={filter}
-          onChange={(e) => setFilter(e.target.value as typeof filter)}
-          className="px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:border-blue-500/50"
-        >
-          <option value="all">{language === 'ar' ? 'الكل' : 'All'}</option>
-          <option value="service">{language === 'ar' ? 'الخدمات' : 'Services'}</option>
-          <option value="project">{language === 'ar' ? 'المشاريع' : 'Projects'}</option>
-          <option value="article">{language === 'ar' ? 'المقالات' : 'Articles'}</option>
-        </select>
       </div>
 
       <div className="bg-gradient-to-br from-white/[0.03] to-white/[0.01] border border-white/10 rounded-2xl overflow-hidden">

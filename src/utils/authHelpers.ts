@@ -16,7 +16,7 @@
 // - Security Mock: Includes basic rate limiting for login attempts to simulate security measures.
 // =====================================================
 
-import { AuthState, User, DEFAULT_ROLE_PERMISSIONS, LOCAL_STORAGE_KEY, SESSION_STORAGE_KEY, AXIOMX_USERS } from '../types/user';
+import { AuthState, User, DEFAULT_ROLE_PERMISSIONS, LOCAL_STORAGE_KEY, SESSION_STORAGE_KEY, AXIOMX_USERS, type EmployeePermissions } from '../types/user';
 import { safeJSONParse } from './storageHelpers';
 import { mockHashPassword } from './mockAuth';
 
@@ -38,7 +38,7 @@ export interface LoginAttempt {
 }
 
 export const loadUserDatabase = (): User[] => {
-  if (typeof window === 'undefined') return [];
+  if (import.meta.env.PROD || typeof window === 'undefined') return [];
   const stored = localStorage.getItem(USER_DB_KEY);
   if (!stored) {
     const defaults = AXIOMX_USERS.map(user => ({
@@ -196,13 +196,16 @@ export const mergeUserPermissions = (user: User): User => {
   }
 
   const effectivePermissions = getUserEffectivePermissions(user.role, user.serviceRole);
+  const permissions: EmployeePermissions = { ...DEFAULT_ROLE_PERMISSIONS[user.role] };
+  (Object.keys(permissions) as (keyof EmployeePermissions)[]).forEach((permission) => {
+    permissions[permission] = effectivePermissions.includes(permission);
+  });
   return {
     ...user,
-    permissions: effectivePermissions,
+    permissions,
   };
 };
 
 export const generateSessionId = (): string => {
   return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15) + Date.now();
 };
-

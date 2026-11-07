@@ -1,13 +1,9 @@
 import React, { useState } from 'react';
 import { Outlet } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import { useLanguage } from '../context/LanguageContext';
 import Sidebar from './Sidebar';
 import Header from './Header';
 
 const AdminLayout: React.FC = () => {
-  const { user } = useAuth();
-  const { isRTL } = useLanguage();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 

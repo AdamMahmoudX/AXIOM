@@ -37,13 +37,9 @@ import {
   UserPlus,
 } from 'lucide-react';
 import { BlockActionBar } from './BlockComponents';
-import {
-  TEAM_DATABASE,
-  getTeamMemberById,
-  getTeamMembersByIds,
-  searchTeamMembers,
-  TeamEmployee,
-} from '../../data/teamDatabase';
+import type { TeamEmployee } from '../../data/teamDatabase';
+
+const getTeamMemberById: (id: string) => TeamEmployee | undefined = () => undefined;
 
 // =====================================================
 // PROFILE MODAL
@@ -335,12 +331,9 @@ const TeamBlockComponent: React.FC<TeamBlockComponentProps> = ({
   const canEdit = user?.role === 'owner' || user?.role === 'admin';
 
   // Get team members based on selected IDs
-  const teamMembers = useMemo(() => {
-    if (block.memberIds.length === 0) {
-      return TEAM_DATABASE;
-    }
-    return getTeamMembersByIds(block.memberIds);
-  }, [block.memberIds]);
+  const teamMembers = useMemo<TeamEmployee[]>(() => {
+    return [];
+  }, []);
 
   // Filter members based on search
   const filteredMembers = useMemo(() => {
@@ -363,9 +356,9 @@ const TeamBlockComponent: React.FC<TeamBlockComponentProps> = ({
   }, [teamMembers, searchQuery, isRTL]);
 
   // Available members for picker
-  const availableMembers = useMemo(() => {
-    return TEAM_DATABASE.filter(m => !block.memberIds.includes(m.id));
-  }, [block.memberIds]);
+  const availableMembers = useMemo<TeamEmployee[]>(() => {
+    return [];
+  }, []);
 
   const handleAddMember = (memberId: string) => {
     onUpdate({ memberIds: [...block.memberIds, memberId] });

@@ -755,7 +755,7 @@ const additionalProjects: Project[] = [
 ];
 
 // Merge all projects
-const ALL_PROJECTS = [...INITIAL_PROJECTS, ...additionalProjects];
+const ALL_PROJECTS: Project[] = [];
 
 interface ProjectContextType {
   projects: Project[];

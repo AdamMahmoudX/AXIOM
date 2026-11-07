@@ -5,6 +5,8 @@
 // =====================================================
 
 // Types
+import type { Article, Project } from '../types/project';
+
 export interface SEOScoreSnapshot {
   id: string;
   timestamp: string;
@@ -371,42 +373,8 @@ export const SEOTrendsEngine = {
   // =====================================================
 
   takePerformanceSnapshot: (
-    projects: Array<{
-      id: string;
-      content: {
-        en: {
-          title: string;
-          seo: {
-            title?: string;
-            description?: string;
-            focusKeyword?: string;
-            openGraph?: {
-              title?: string;
-              description?: string;
-              image?: string;
-            };
-          };
-        };
-      };
-    }>,
-    articles: Array<{
-      id: string;
-      content: {
-        en: {
-          title: string;
-          seo: {
-            title?: string;
-            description?: string;
-            focusKeyword?: string;
-            openGraph?: {
-              title?: string;
-              description?: string;
-              image?: string;
-            };
-          };
-        };
-      };
-    }>
+    projects: Project[],
+    articles: Article[]
   ): SEOPerformanceSnapshot => {
     const now = new Date();
     const dateStr = formatDate(now);
@@ -564,42 +532,8 @@ export const SEOTrendsEngine = {
 
   generateTrendReport: (
     type: 'daily' | 'weekly' | 'monthly',
-    projects: Array<{
-      id: string;
-      content: {
-        en: {
-          title: string;
-          seo: {
-            title?: string;
-            description?: string;
-            focusKeyword?: string;
-            openGraph?: {
-              title?: string;
-              description?: string;
-              image?: string;
-            };
-          };
-        };
-      };
-    }>,
-    articles: Array<{
-      id: string;
-      content: {
-        en: {
-          title: string;
-          seo: {
-            title?: string;
-            description?: string;
-            focusKeyword?: string;
-            openGraph?: {
-              title?: string;
-              description?: string;
-              image?: string;
-            };
-          };
-        };
-      };
-    }>
+    projects: Project[],
+    articles: Article[]
   ): TrendReport => {
     const now = new Date();
     const periodStart = new Date(now);

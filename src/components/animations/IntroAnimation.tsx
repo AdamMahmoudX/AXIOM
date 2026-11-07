@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 
 interface IntroAnimationProps {
   onComplete: () => void;
@@ -15,20 +15,38 @@ interface Particle {
 }
 
 const IntroAnimation: React.FC<IntroAnimationProps> = ({ onComplete }) => {
-  const [phase, setPhase] = useState(0);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      onComplete();
+      return;
+    }
+
     const canvas = canvasRef.current;
     if (!canvas) return;
 
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-
     const particles: Particle[] = [];
+    const resizeCanvas = () => {
+      const oldWidth = canvas.width;
+      const oldHeight = canvas.height;
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      if (oldWidth && oldHeight) {
+        particles.forEach((particle) => {
+          particle.x *= canvas.width / oldWidth;
+          particle.targetX *= canvas.width / oldWidth;
+          particle.y *= canvas.height / oldHeight;
+          particle.targetY *= canvas.height / oldHeight;
+        });
+      }
+    };
+
+    resizeCanvas();
     const particleCount = 150;
     const centerX = canvas.width / 2;
     const centerY = canvas.height / 2;
@@ -46,6 +64,7 @@ const IntroAnimation: React.FC<IntroAnimationProps> = ({ onComplete }) => {
     }
 
     let animationId: number;
+    let completionTimeout: ReturnType<typeof setTimeout>;
     let frame = 0;
 
     const animate = () => {
@@ -53,10 +72,7 @@ const IntroAnimation: React.FC<IntroAnimationProps> = ({ onComplete }) => {
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       frame++;
-
-      if (phase === 0 && frame > 30) {
-        setPhase(1);
-      }
+      const phase = frame < 30 ? 0 : frame < 100 ? 1 : frame < 170 ? 2 : 3;
 
       if (phase >= 1) {
         particles.forEach((p) => {
@@ -97,8 +113,14 @@ const IntroAnimation: React.FC<IntroAnimationProps> = ({ onComplete }) => {
             });
           });
 
-          ctx.font = 'bold 72px Inter, sans-serif';
-          ctx.fillStyle = `rgba(200, 200, 205, ${Math.min((frame - 90) * 0.02, 0.8)})`;
+        }
+
+        if (phase >= 2) {
+          const opacity = phase === 2
+            ? Math.min((frame - 90) * 0.02, 0.8)
+            : Math.max(0.8 * (1 - (frame - 170) / 30), 0);
+          ctx.font = `bold ${Math.min(canvas.width * 0.12, 72)}px Inter, sans-serif`;
+          ctx.fillStyle = `rgba(200, 200, 205, ${opacity})`;
           ctx.textAlign = 'center';
           ctx.textBaseline = 'middle';
           ctx.fillText('AXIOMX', centerX, centerY);
@@ -108,15 +130,19 @@ const IntroAnimation: React.FC<IntroAnimationProps> = ({ onComplete }) => {
       if (frame < 200) {
         animationId = requestAnimationFrame(animate);
       } else {
-        setPhase(4);
-        setTimeout(onComplete, 500);
+        completionTimeout = setTimeout(onComplete, 500);
       }
     };
 
+    window.addEventListener('resize', resizeCanvas);
     animate();
 
-    return () => cancelAnimationFrame(animationId);
-  }, [phase, onComplete]);
+    return () => {
+      cancelAnimationFrame(animationId);
+      clearTimeout(completionTimeout);
+      window.removeEventListener('resize', resizeCanvas);
+    };
+  }, [onComplete]);
 
   return (
     <div className="fixed inset-0 z-[100] bg-[#050505]">

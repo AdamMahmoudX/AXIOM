@@ -624,6 +624,3 @@ export class SEOHealthMonitor {
     };
   }
 }
-
-// Export types for external use
-export type { SEOHealthStatus, SEOHealthIssue, SEOHealthPage, HealthScanResult };

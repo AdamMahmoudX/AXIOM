@@ -21,6 +21,7 @@ const translations: Record<Language, Record<string, string>> = {
     'nav.articles': 'Articles',
     'nav.contact': 'Contact',
     'nav.getStarted': 'Get Started',
+    'nav.login': 'Log in',
 
     // Hero
     'hero.title': 'NEXUS TECH',
@@ -93,8 +94,9 @@ const translations: Record<Language, Record<string, string>> = {
 
     // Projects
     'projects.title': 'Featured Projects',
-    'projects.subtitle': 'Innovative solutions we\'ve delivered',
+    'projects.subtitle': 'Browse published projects',
     'projects.viewProject': 'View Project',
+    'projects.empty': 'No projects have been published yet.',
     'projects.tech': 'Tech:',
     'projects.cuttingEdge': 'Cutting-edge solutions that deliver exceptional results',
 
@@ -505,9 +507,6 @@ const translations: Record<Language, Record<string, string>> = {
     'service.gettingStarted': 'Getting Started Guide',
     'service.bestPractices': 'Best Practices',
     'service.caseStudies': 'Case Studies',
-    'service.ahmedHassan': 'Ahmed Hassan',
-    'service.sarahChen': 'Sarah Chen',
-    'service.marcusWilliams': 'Marcus Williams',
     'service.highPerformance': 'High Performance',
     'service.highPerformanceDesc': 'Lightning-fast load times with optimized code splitting and caching strategies',
     'service.scalableArchitecture': 'Scalable Architecture',
@@ -603,17 +602,6 @@ const translations: Record<Language, Record<string, string>> = {
     'project.duration.social': '6 months',
 
     // Project Detail - Client translations
-    'project.client.horAI': 'Enterprise Tech Corp',
-    'project.client.cyberSecurity': 'Global Security Inc',
-    'project.client.smartWeb': 'Digital Solutions Ltd',
-    'project.client.ecommerce': 'RetailMax Inc',
-    'project.client.healthcare': 'MedTech Health',
-    'project.client.gaming': 'GameStudio Pro',
-    'project.client.fintech': 'FinanceHub Global',
-    'project.client.education': 'EduLearn Academy',
-    'project.client.logistics': 'FastTrack Logistics',
-    'project.client.social': 'SocialConnect',
-
     // Project Detail - Image alt text
     'project.alt.aiArchitecture': 'AI System Architecture',
     'project.alt.threatDetection': 'Threat Detection Interface',
@@ -699,9 +687,6 @@ const translations: Record<Language, Record<string, string>> = {
     'service.related.startGuide': 'Getting Started Guide',
     'service.related.bestPractices': 'Best Practices',
     'service.related.caseStudies': 'Case Studies',
-    'service.related.ahmedHassan': 'Ahmed Hassan',
-    'service.related.sarahChen': 'Sarah Chen',
-    'service.related.marcusWilliams': 'Marcus Williams',
 
     // ServicePage - Keyword terms
     'service.keyword.react': 'React',
@@ -742,17 +727,12 @@ const translations: Record<Language, Record<string, string>> = {
     'article.tag.prefix': '#',
 
     // Contact Info
-    'contact.email': 'hello@nexus.tech',
-    'contact.phone': '+1 (555) 123-4567',
-    'contact.location': 'San Francisco, CA',
 
     // Admin Dashboard - Stats
-    'admin.totalUsers': 'Total Users',
+    'admin.employeesCount': 'Employees',
     'admin.activeProjects': 'Active Projects',
+    'admin.servicesCount': 'Services',
     'admin.articlesCount': 'Articles',
-    'admin.totalViews': 'Total Views',
-    'admin.monthlyPerformance': 'Monthly Performance',
-    'admin.contentDistribution': 'Content Distribution',
     'admin.recentActivity': 'Recent Activity',
     'admin.quickActions': 'Quick Actions',
     'admin.viewAll': 'View All',
@@ -765,28 +745,14 @@ const translations: Record<Language, Record<string, string>> = {
 
     // Admin Dashboard - Welcome
     'admin.welcome': 'Welcome back',
-    'admin.welcomeSubtitle': "Here's what's happening with your projects today",
-
-    // Admin - Time Ago
-    'admin.minAgo': 'min ago',
-    'admin.minsAgo': 'mins ago',
-    'admin.hourAgo': 'hour ago',
-    'admin.hoursAgo': 'hours ago',
-    'admin.justNow': 'just now',
+    'admin.welcomeSubtitle': 'A live overview of your team and content',
 
     // Admin - Roles
     'role.owner': 'Owner',
     'role.manager': 'Manager',
     'role.employee': 'Employee',
 
-    // Admin - Notifications
-    'admin.notifications': 'Notifications',
-    'admin.notification.newProject': 'New project added',
-    'admin.notification.teamJoined': 'Team member joined',
-    'admin.notification.systemUpdated': 'System update completed',
-
     // Admin - Header
-    'admin.profile': 'Profile',
     'admin.settings': 'Settings',
     'admin.logout': 'Logout',
 
@@ -817,6 +783,7 @@ const translations: Record<Language, Record<string, string>> = {
     'nav.articles': 'المقالات',
     'nav.contact': 'اتصل بنا',
     'nav.getStarted': 'ابدأ الآن',
+    'nav.login': 'تسجيل الدخول',
 
     // Hero
     'hero.title': 'نيكسس تك',
@@ -889,8 +856,9 @@ const translations: Record<Language, Record<string, string>> = {
 
     // Projects
     'projects.title': 'مشاريع مميزة',
-    'projects.subtitle': 'حلول مبتكرة قدمناها',
+    'projects.subtitle': 'تصفح المشاريع المنشورة',
     'projects.viewProject': 'عرض المشروع',
+    'projects.empty': 'لم يتم نشر أي مشاريع بعد.',
     'projects.tech': 'التقنيات:',
     'projects.cuttingEdge': 'حلول متطورة توفر نتائج استثنائية',
 
@@ -1063,17 +1031,12 @@ const translations: Record<Language, Record<string, string>> = {
     'common.technologiesUsed': 'التقنيات المستخدمة',
 
     // Contact Info
-    'contact.email': 'hello@nexus.tech',
-    'contact.phone': '+1 (555) 123-4567',
-    'contact.location': 'سان فرانسيسكو، كاليفورنيا',
 
     // Admin Dashboard - Stats
-    'admin.totalUsers': 'إجمالي المستخدمين',
+    'admin.employeesCount': 'الموظفون',
     'admin.activeProjects': 'المشاريع النشطة',
+    'admin.servicesCount': 'الخدمات',
     'admin.articlesCount': 'المقالات',
-    'admin.totalViews': 'إجمالي المشاهدات',
-    'admin.monthlyPerformance': 'الأداء الشهري',
-    'admin.contentDistribution': 'توزيع المحتوى',
     'admin.recentActivity': 'النشاط الأخير',
     'admin.quickActions': 'إجراءات سريعة',
     'admin.viewAll': 'عرض الكل',
@@ -1086,28 +1049,14 @@ const translations: Record<Language, Record<string, string>> = {
 
     // Admin Dashboard - Welcome
     'admin.welcome': 'مرحباً',
-    'admin.welcomeSubtitle': 'إليك ملخص نشاطك لهذا اليوم',
-
-    // Admin - Time Ago
-    'admin.minAgo': 'دقيقة',
-    'admin.minsAgo': 'دقائق',
-    'admin.hourAgo': 'ساعة',
-    'admin.hoursAgo': 'ساعات',
-    'admin.justNow': 'الآن',
+    'admin.welcomeSubtitle': 'نظرة مباشرة على فريقك ومحتواك',
 
     // Admin - Roles
     'role.owner': 'المالك',
     'role.manager': 'مدير',
     'role.employee': 'موظف',
 
-    // Admin - Notifications
-    'admin.notifications': 'الإشعارات',
-    'admin.notification.newProject': 'تم إضافة مشروع جديد',
-    'admin.notification.teamJoined': 'انضم عضو جديد للفريق',
-    'admin.notification.systemUpdated': 'تم تحديث النظام',
-
     // Admin - Header
-    'admin.profile': 'الملف الشخصي',
     'admin.settings': 'الإعدادات',
     'admin.logout': 'تسجيل الخروج',
 

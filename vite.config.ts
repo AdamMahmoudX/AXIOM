@@ -1,10 +1,46 @@
 import path from "path"
 import react from "@vitejs/plugin-react"
-import { defineConfig } from "vite"
+import { defineConfig, loadEnv, type Plugin } from "vite"
 
-export default defineConfig({
+const deploymentMetadata = (mode: string): Plugin => {
+  const configuredUrl = loadEnv(mode, process.cwd(), "").VITE_WEBSITE_URL?.trim()
+  const siteUrl = configuredUrl ? new URL(configuredUrl).origin : undefined
+
+  return {
+    name: "deployment-metadata",
+    generateBundle() {
+      const robots = [
+        "User-agent: *",
+        "Allow: /",
+        "Disallow: /admin",
+        "Disallow: /api",
+        "Disallow: /login",
+        ...(siteUrl ? [`Sitemap: ${siteUrl}/sitemap.xml`] : []),
+        "",
+      ].join("\n")
+
+      this.emitFile({ type: "asset", fileName: "robots.txt", source: robots })
+
+      if (!siteUrl) return
+
+      const publicPaths = ["/", "/ar", "/projects", "/ar/projects"]
+      const sitemap = [
+        '<?xml version="1.0" encoding="UTF-8"?>',
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+        ...publicPaths.map((route) => `  <url><loc>${siteUrl}${route}</loc></url>`),
+        "</urlset>",
+        "",
+      ].join("\n")
+
+      this.emitFile({ type: "asset", fileName: "sitemap.xml", source: sitemap })
+    },
+  }
+}
+
+export default defineConfig(({ mode }) => ({
   plugins: [
-    react()
+    react(),
+    deploymentMetadata(mode),
   ],
   resolve: {
     alias: {
@@ -36,4 +72,4 @@ export default defineConfig({
     },
     chunkSizeWarningLimit: 200,
   },
-})
+}))

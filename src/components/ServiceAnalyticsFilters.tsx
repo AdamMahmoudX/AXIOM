@@ -568,6 +568,6 @@ const calculateServiceSEOScore = (service: Service): number => {
 
 // Export helper functions for use in other components
 export { calculateServiceSEOScore, getConnectionCount, isSEOComplete };
-export type { ServiceFilters, FilterSummary };
+export type { FilterSummary };
 
 export default ServiceAnalyticsFilters;

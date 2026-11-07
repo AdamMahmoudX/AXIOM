@@ -11,10 +11,7 @@
     "lint:core": "eslint src/utils src/api src/config src/routes src/services/auth src/components/ProtectedRoute.tsx src/context/AuthContext.tsx src/context/SEOSettingsContext.tsx src/lib/AnalyticsManager.tsx src/lib/SearchConsoleManager.ts",
     "typecheck": "tsc -p tsconfig.app.json --noEmit",
     "typecheck:strict": "tsc -p tsconfig.strict.json",
-    "typecheck:api": "tsc -p server/tsconfig.json --noEmit",
-    "validate": "npm run typecheck:strict && npm run typecheck:api && npm run build",
-    "dev:api": "tsx watch server/src/index.ts",
-    "start:api": "tsx server/src/index.ts",
+    "validate": "npm run typecheck:strict && npm run build",
     "preview": "vite preview",
     "install-deps": "pnpm install",
     "clean": "node -e \"require('fs').rmSync('node_modules',{recursive:true,force:true})\""

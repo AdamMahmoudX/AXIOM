@@ -22,6 +22,8 @@ const ProjectsSection: React.FC = () => {
       slug: project.content.en.slug,
     }));
 
+  if (projectsList.length === 0) return null;
+
   return (
     <section id="projects" className="py-32 bg-[#050505] relative overflow-hidden">
       <div className="absolute inset-0 opacity-30">

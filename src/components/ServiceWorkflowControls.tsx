@@ -57,6 +57,8 @@ interface WorkflowTransitionConfig {
   color: string;
   bgColor: string;
   requiredPermission: string;
+  disabled?: boolean;
+  disabledReason?: string;
 }
 
 // Define all possible transitions

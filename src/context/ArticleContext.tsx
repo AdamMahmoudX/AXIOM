@@ -413,7 +413,7 @@ interface ArticleContextType {
 const ArticleContext = createContext<ArticleContextType | undefined>(undefined);
 
 export const ArticleProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [articles, setArticles] = useState<Article[]>(INITIAL_ARTICLES);
+  const [articles, setArticles] = useState<Article[]>([]);
 
   const addArticle = useCallback(
     (articleData: Omit<Article, 'id' | 'createdAt' | 'updatedAt' | 'translationStatus'>) => {

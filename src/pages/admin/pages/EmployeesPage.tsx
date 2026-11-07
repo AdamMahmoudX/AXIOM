@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { useEmployees } from '../../../context/EmployeeContext';
 import { useLanguage } from '../../../context/LanguageContext';
 import { useAuth } from '../../../context/AuthContext';
-import { Employee, UserRole, EmployeeStatus, ROLE_LABELS, STATUS_LABELS } from '../../../types/user';
+import { DEFAULT_ROLE_PERMISSIONS, Employee, UserRole, EmployeeStatus, ROLE_LABELS, STATUS_LABELS } from '../../../types/user';
 import Portal from '../../../components/Portal';
 import {
   Search,
@@ -359,59 +359,9 @@ const EmployeeModal: React.FC<{
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Get default permissions based on role
-    const getDefaultPermissions = (role: UserRole) => {
-      switch (role) {
-        case 'owner':
-          return {
-            projects_view: true, projects_create: true, projects_edit: true, projects_delete: true,
-            services_view: true, services_manage: true,
-            articles_view: true, articles_create: true, articles_edit: true, articles_delete: true,
-            messages_view: true, messages_send: true,
-            attachments_view: true, attachments_upload: true, attachments_delete: true,
-            team_view: true, team_manage: true,
-            settings_view: true, settings_edit: true,
-            permissions_view: true, permissions_manage: true,
-          };
-        case 'admin':
-          return {
-            projects_view: true, projects_create: true, projects_edit: true, projects_delete: true,
-            services_view: true, services_manage: true,
-            articles_view: true, articles_create: true, articles_edit: true, articles_delete: true,
-            messages_view: true, messages_send: true,
-            attachments_view: true, attachments_upload: true, attachments_delete: true,
-            team_view: true, team_manage: true,
-            settings_view: true, settings_edit: true,
-            permissions_view: true, permissions_manage: false,
-          };
-        case 'manager':
-          return {
-            projects_view: true, projects_create: true, projects_edit: true, projects_delete: false,
-            services_view: true, services_manage: true,
-            articles_view: true, articles_create: true, articles_edit: true, articles_delete: false,
-            messages_view: true, messages_send: true,
-            attachments_view: true, attachments_upload: true, attachments_delete: false,
-            team_view: true, team_manage: false,
-            settings_view: true, settings_edit: false,
-            permissions_view: true, permissions_manage: false,
-          };
-        default:
-          return {
-            projects_view: true, projects_create: false, projects_edit: false, projects_delete: false,
-            services_view: true, services_manage: false,
-            articles_view: true, articles_create: false, articles_edit: false, articles_delete: false,
-            messages_view: true, messages_send: true,
-            attachments_view: true, attachments_upload: false, attachments_delete: false,
-            team_view: true, team_manage: false,
-            settings_view: true, settings_edit: false,
-            permissions_view: false, permissions_manage: false,
-          };
-      }
-    };
-
     const employeeData = {
       ...formData,
-      permissions: employee?.permissions || getDefaultPermissions(formData.role as UserRole),
+      permissions: employee?.permissions || DEFAULT_ROLE_PERMISSIONS[formData.role as UserRole],
     };
 
     if (mode === 'add') {

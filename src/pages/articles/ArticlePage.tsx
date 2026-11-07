@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { articlesMeta, ArticleMeta, getArticleBySlug, articleContent } from '../../content/data/articles';
+import type { ArticleMeta } from '../../content/data/articles';
 import { useLanguage } from '../../context/LanguageContext';
 import { MissingTranslationWarning } from '../../components/MissingTranslationWarning';
 import { useArticles } from '../../context/ArticleContext';
@@ -203,32 +203,8 @@ const ArticlePage: React.FC = () => {
       return;
     }
 
-    const loadArticle = () => {
-      setIsLoading(true);
-      setShowContent(false);
-
-      // Find article metadata
-      const meta = getArticleBySlug(slug);
-      const content = meta ? articleContent[slug] : undefined;
-      if (!meta) {
-        navigate('/');
-        return;
-      }
-
-      // Get article content from the content object
-      if (!content) {
-        console.error('Article content not found:', slug);
-        navigate('/');
-        return;
-      }
-
-      setArticle({ meta, content });
-
-      setTimeout(() => setShowContent(true), 100);
-      setIsLoading(false);
-    };
-
-    loadArticle();
+    setArticle(null);
+    setIsLoading(false);
 
     // Scroll to top on article change
     window.scrollTo({ top: 0, behavior: 'smooth' });

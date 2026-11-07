@@ -5,12 +5,13 @@
 // Phase 5E-2: Service Relationship Validation
 // =====================================================
 
-import React, { useState, useEffect } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useServices, RelationshipValidationError } from '../../../context/ServiceContext';
 import { useCategories } from '../../../context/CategoryContext';
 import { useLanguage } from '../../../context/LanguageContext';
 import { useAuth } from '../../../context/AuthContext';
+import { SITE_URL } from '../../../config/env';
 import {
   Service,
   ServiceStatus,
@@ -313,23 +314,23 @@ const ServiceCreatePage: React.FC = () => {
     }));
   };
 
-  const handleValidationChange = (
+  const handleValidationChange = useCallback((
     isValid: boolean,
-    errorCount: number,
+    _errorCount: number,
     errors: RelationshipValidationError[]
   ) => {
     setIsRelationshipValid(isValid);
     setRelationshipErrors(errors);
 
     // Clear relationship error when relationships become valid
-    if (isValid && errors.relationships) {
+    if (isValid) {
       setErrors((prev) => {
         const newErrors = { ...prev };
         delete newErrors.relationships;
         return newErrors;
       });
     }
-  };
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -533,7 +534,7 @@ const ServiceCreatePage: React.FC = () => {
                 {language === 'ar' ? 'المحتوى' : 'Content'}
               </h2>
 
-              <LanguageTabs activeLang={activeLang} onLangChange={setActiveLang} />
+              <LanguageTabs activeLanguage={activeLang} onLanguageChange={setActiveLang} />
 
               <div className="mt-4 space-y-4">
                 {/* Slug */}
@@ -596,7 +597,7 @@ const ServiceCreatePage: React.FC = () => {
                   <BlockEditor
                     blocks={blocks[activeLang]}
                     onChange={(newBlocks) => handleBlocksChange(activeLang, newBlocks)}
-                    language={activeLang}
+                    activeLanguage={activeLang}
                   />
                 </div>
               </div>
@@ -682,7 +683,7 @@ const ServiceCreatePage: React.FC = () => {
                       {formData.content[activeLang].seo.title || formData.title || 'عنوان الصفحة'}
                     </p>
                     <p className="text-green-700 text-sm truncate">
-                      https://axiomx.pro/services/{formData.content[activeLang].slug || 'service-url'}
+                      {SITE_URL}/services/{formData.content[activeLang].slug || 'service-url'}
                     </p>
                     <p className="text-gray-600 text-sm mt-1 line-clamp-2">
                       {formData.content[activeLang].seo.description || formData.shortDescription || 'وصف الصفحة يظهر هنا في نتائج البحث...'}
